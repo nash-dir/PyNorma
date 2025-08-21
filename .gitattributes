@@ -1,0 +1,14 @@
+# 모든 텍스트 파일에 대해 Git이 줄바꿈을 자동으로 관리하도록 설정합니다.
+* text=auto
+
+# 아래 파일들은 확실히 텍스트 파일이므로 명시적으로 지정합니다.
+*.py text
+*.md text
+*.txt text
+*.yml text
+*.gitignore text
+*.gitattributes text
+
+# 이미지 같은 바이너리 파일은 Git이 건드리지 않도록 설정합니다.
+*.png binary
+*.jpg binary

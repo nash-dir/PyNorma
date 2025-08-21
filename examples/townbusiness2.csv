@@ -1,0 +1,119 @@
+Westlin,Hawthorne Bay,Barber,3,3
+Westlin,Hawthorne Bay,Restaurant,10,24
+Westlin,Hawthorne Bay,Gym,8,18
+Westlin,Hawthorne Bay,Truck repair shop,1,4
+Westlin,Hawthorne Bay,Dnetist,1,4
+Westlin,Hawthorne Bay,Bar,9,20
+Westlin,Hawthorne Bay,Grocery,23,56
+Westlin,Hawthorne Bay,Convenience Store,13,48
+Westlin,Hawthorne Bay,Caf?,8,14
+Westlin,Hawthorne Bay,Gas station,6,21
+Westlin,Hawthorne Bay,"Convenience Store, Gas station",1,1
+Westlin,Hawthorne Bay,Pharmacy,1,1
+Westlin,Hawthorne Bay,"CVS, Drugstore",3,3
+Westlin,Hawthorne Bay,"Gas station, Drugstore",1,3
+Westlin,Hawthorne Bay,"Grocery, Gas station, Drugstore",1,2
+Westlin,Hawthorne Bay,"CVS, Gas station, Drugstore",1,1
+Westlin,Ironwood,B&B,3,7
+Westlin,Ironwood,Car wash,1,1
+Westlin,Ironwood,Barber,1,4
+Westlin,Ironwood,Restaurant,9,14
+Westlin,Ironwood,Gym,8,13
+Westlin,Ironwood,Truck repair shop,3,5
+Westlin,Ironwood,Bar,14,19
+Westlin,Ironwood,Grocery,18,19
+Westlin,Ironwood,Hair dresser,4,7
+Westlin,Ironwood,Convenience Store,5,20
+Westlin,Ironwood,Gas station,6,12
+Westlin,Ironwood,Drugstore,1,3
+Westlin,Ironwood,"Grocery, Drugstore",2,4
+Westlin,Ironwood,"Gas station, Drugstore",1,1
+Westlin,Jasper Hill,B&B,25,57
+Westlin,Jasper Hill,Barber,3,9
+Westlin,Jasper Hill,Restaurant,5,12
+Westlin,Jasper Hill,Gym,3,12
+Westlin,Jasper Hill,Truck repair shop,5,9
+Westlin,Jasper Hill,Bar,23,32
+Westlin,Jasper Hill,Grocery,24,56
+Westlin,Jasper Hill,Dentist office,1,3
+Westlin,Jasper Hill,Convenience Store,9,16
+Westlin,Jasper Hill,Coffee shop,4,11
+Westlin,Jasper Hill,Repair shop (truck),2,4
+Westlin,Jasper Hill,Gas station,2,4
+Westlin,Jasper Hill,"Convenience Store, Gas station",1,3
+Westlin,Jasper Hill,"Grocery, Drugstore",1,1
+Westlin,Jasper Hill,"Gas station, Drugstore",1,2
+Westlin,Jasper Hill,"Grocery, Gas station, Drugstore",1,1
+Westlin,Jasper Hill,"CVS, Gas station, Drugstore",2,5
+Westlin,Kingsfield,B&B,1,3
+Westlin,Kingsfield,Barber,4,6
+Westlin,Kingsfield,Restaurant,12,46
+Westlin,Kingsfield,Gym,6,16
+Westlin,Kingsfield,Truck repair shop,6,8
+Westlin,Kingsfield,Bar,14,48
+Westlin,Kingsfield,Grocery,28,35
+Westlin,Kingsfield,Convenience Store,7,11
+Westlin,Kingsfield,Cafe,2,8
+Westlin,Kingsfield,Gas station,5,13
+Westlin,Kingsfield,"Convenience Store, Gas station",1,4
+Westlin,Kingsfield,Drugstore,1,1
+Westlin,Kingsfield,"Gas station, Drugstore",1,1
+Westlin,Linden Grove,Barber,1,3
+Westlin,Linden Grove,Gym,1,3
+Westlin,Linden Grove,Grocery,2,7
+Westlin,Maple Run,Restaurant,1,1
+Westlin,Maple Run,Eatery,3,12
+Westlin,Maple Run,Grocery,5,11
+Westlin,Northbridge,Car wash,1,2
+Westlin,Northbridge,Barber,4,6
+Westlin,Northbridge,Restaurant,5,16
+Westlin,Northbridge,Gym,5,10
+Westlin,Northbridge,Truck repair shop,9,14
+Westlin,Northbridge,Bar,11,23
+Westlin,Northbridge,Grocery,11,42
+Westlin,Northbridge,Convenience Store,2,6
+Westlin,Northbridge,Cafe,4,11
+Westlin,Northbridge,Gas station,4,15
+Westlin,Northbridge,Drugstore,2,7
+Westlin,Northbridge,"CVS, Drugstore",2,6
+Westlin,Oakridge,B&B,1,3
+Westlin,Oakridge,Barber,4,6
+Westlin,Oakridge,Restaurant,3,10
+Westlin,Oakridge,Gym,1,4
+Westlin,Oakridge,Bar,15,26
+Westlin,Oakridge,Grocery,34,101
+Westlin,Oakridge,Convenience Store,7,15
+Westlin,Oakridge,Cafe,4,6
+Westlin,Oakridge,Gas station,10,17
+Westlin,Oakridge,Drugstore,8,11
+Westlin,Oakridge,"Grocery, Drugstore",4,13
+Westlin,Oakridge,"CVS, Drugstore",2,3
+Westlin,Oakridge,"Gas station, Drugstore",3,10
+Westlin,Oakridge,"Grocery, Gas station, Drugstore",3,10
+Westlin,Pine Hollow,Restaurant,1,3
+Westlin,Quail Ridge,Gym,1,1
+Westlin,Quail Ridge,Bar,3,11
+Westlin,Redstone,Truck repair shop,1,2
+Westlin,Silver Creek,B&B,9,19
+Westlin,Silver Creek,Car wash,3,7
+Westlin,Silver Creek,Barber,4,12
+Westlin,Silver Creek,Dentist,1,1
+Westlin,Silver Creek,Fast Food,8,21
+Westlin,Silver Creek,Diner,5,15
+Westlin,Silver Creek,Gym,6,11
+Westlin,Silver Creek,Truck repair shop,12,24
+Westlin,Silver Creek,Bar,58,127
+Westlin,Silver Creek,Grocery,64,216
+Westlin,Silver Creek,Hair salon,8,14
+Westlin,Silver Creek,Convenience Store,41,120
+Westlin,Silver Creek,Cafe,32,126
+Westlin,Silver Creek,Gasstation,51,186
+Westlin,Silver Creek,"Grocery, Convenience Store",1,2
+Westlin,Silver Creek,"Grocery, Gas station",2,2
+Westlin,Silver Creek,"Convenience Store, Gas station",10,37
+Westlin,Silver Creek,Drugstore,24,31
+Westlin,Silver Creek,"Grocery, Drugstore",14,48
+Westlin,Silver Creek,"CVS, Drugstore",12,29
+Westlin,Silver Creek,"Gas station, Drugstore",6,15
+Westlin,Silver Creek,"Grocery, Gas station, Drugstore",12,45
+Westlin,Silver Creek,"CVS, Gas station, Drugstore",4,10

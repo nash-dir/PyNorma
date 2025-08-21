@@ -1,0 +1,9 @@
+#--- Delimiter Candidates ---
+, 
+,
+;
+/
+|
+ㆍ
+&
+:

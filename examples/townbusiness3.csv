@@ -1,0 +1,139 @@
+This data is improvised for data cleaning practice and does not reflect real world data.,,,,,,,
+,,,,,,,
+Preliminary estimates as of August 2023; figures may not reflect most recent field updates.,,,,,,,
+NOTE: This file is not formatted for automated processing. Use caution when importing.,,,,,,,
+,,,,,,,
+----------------- BEGIN DATA BELOW THIS LINE -----------------,,,,,,,
+,County,City,Town,Business,License,count,staff
+,AshfordHills,Wapiti,Timberville,Bed and breakfast,0,5,16
+,AshfordHills,Wapiti,Timberville,Car wash,0,1,1
+,AshfordHills,Wapiti,Timberville,Barber,0,4,4
+,AshfordHills,Wapiti,Timberville,Restaurant,0,7,10
+,AshfordHills,Wapiti,Timberville,Gym,0,1,2
+,AshfordHills,Wapiti,Timberville,Truck repair shop,0,10,37
+,AshfordHills,Wapiti,Timberville,Bar,0,41,152
+,AshfordHills,Wapiti,Timberville,Grocery,0,52,148
+,AshfordHills,Wapiti,Timberville,Convenience Store,0,34,78
+,AshfordHills,Wapiti,Timberville,Cafe,0,21,73
+,AshfordHills,Wapiti,Timberville,Repair shop (truck),0,3,8
+,AshfordHills,Wapiti,Timberville,Gas station,0,26,35
+,AshfordHills,Wapiti,Timberville,"Grocery, Convenience Store",0,1,2
+,AshfordHills,Wapiti,Timberville,"Convenience Store, Gas station",0,4,6
+,AshfordHills,Wapiti,Timberville,Drug store,1,9,31
+,AshfordHills,Wapiti,Timberville,"Grocery, Drugstore",1,8,30
+,AshfordHills,Wapiti,Timberville,"CVS, Drugstore",1,6,21
+,AshfordHills,Wapiti,Timberville,"Gas station, Drugstore",1,5,5
+,AshfordHills,Wapiti,Timberville,"Grocery, Convenience Store, Gas station",0,1,1
+,AshfordHills,Wapiti,Timberville,"Grocery, CVS, Drugstore",1,1,1
+,AshfordHills,Wapiti,Timberville,"Grocery, Gas station, Drugstore",1,4,13
+,AshfordHills,Wapiti,Timberville,"CVS, Gas station, Drugstore",1,3,9
+,AshfordHills,Wapiti,Union Lake,B&B,0,7,27
+,AshfordHills,Wapiti,Union Lake,Barber,0,9,17
+,AshfordHills,Wapiti,Union Lake,Restaurant,0,7,9
+,AshfordHills,Wapiti,Union Lake,Salon,0,7,8
+,AshfordHills,Wapiti,Union Lake,Truck repair shop,0,5,9
+,AshfordHills,Wapiti,Union Lake,Bar,0,8,13
+,AshfordHills,Wapiti,Union Lake,Grocery,0,63,227
+,AshfordHills,Wapiti,Union Lake,Convenience Store,0,18,62
+,AshfordHills,Wapiti,Union Lake,Caf?,0,13,23
+,AshfordHills,Wapiti,Union Lake,Gas station,0,16,33
+,AshfordHills,Wapiti,Union Lake,"Grocery, Convenience Store",0,2,5
+,AshfordHills,Wapiti,Union Lake,"Convenience Store, Gas station",0,2,3
+,AshfordHills,Wapiti,Union Lake,Drugstore,1,13,37
+,AshfordHills,Wapiti,Union Lake,"Grocery, Drugstore",1,5,6
+,AshfordHills,Wapiti,Union Lake,"CVS, Drugstore",1,3,3
+,AshfordHills,Wapiti,Union Lake,"Gas station, Drugstore",1,3,4
+,AshfordHills,Wapiti,Union Lake,"Grocery, Gas station, Drugstore",1,2,2
+,AshfordHills,Wapiti,Union Lake,"CVS, Gas station, Drugstore",1,1,2
+,AshfordHills,Wapiti,Valley Glen,Bed and breakfast,0,1,2
+,AshfordHills,Wapiti,Valley Glen,Hair dresser,0,2,3
+,AshfordHills,Wapiti,Valley Glen,Car wash,0,2,8
+,AshfordHills,Wapiti,Valley Glen,Barber,0,14,14
+,AshfordHills,Wapiti,Valley Glen,Restaurant,0,33,92
+,AshfordHills,Wapiti,Valley Glen,Gym,0,15,15
+,AshfordHills,Wapiti,Valley Glen,Truck repair shop,0,7,9
+,AshfordHills,Wapiti,Valley Glen,Bar,0,13,13
+,AshfordHills,Wapiti,Valley Glen,Grocery,0,67,131
+,AshfordHills,Wapiti,Valley Glen,Convenience Store,0,14,19
+,AshfordHills,Wapiti,Valley Glen,Cafe,0,12,22
+,AshfordHills,Wapiti,Valley Glen,Gas station,0,24,80
+,AshfordHills,Wapiti,Valley Glen,"Grocery, Convenience Store",0,2,2
+,AshfordHills,Wapiti,Valley Glen,"Convenience Store, Gas station",0,1,1
+,AshfordHills,Wapiti,Valley Glen,Drugstore,1,10,31
+,AshfordHills,Wapiti,Valley Glen,"Grocery, Drugstore",1,6,24
+,AshfordHills,Wapiti,Valley Glen,"CVS, Drugstore",1,1,1
+,AshfordHills,Wapiti,Valley Glen,"Gas station, Drugstore",1,3,7
+,AshfordHills,Wapiti,Valley Glen,"Grocery, Gas station, Drugstore",1,2,2
+,AshfordHills,Bluegrass,Valley Glen,"CVS, Gas station, Drugstore",1,1,1
+,AshfordHills,Bluegrass,Willow Springs,Car wash,0,3,10
+,AshfordHills,Bluegrass,Willow Springs,Barber,0,9,16
+,AshfordHills,Bluegrass,Willow Springs,Restaurant,0,7,16
+,AshfordHills,Bluegrass,Willow Springs,Gym,0,5,14
+,AshfordHills,Bluegrass,Willow Springs,Truck repair shop,0,3,10
+,AshfordHills,Bluegrass,Willow Springs,Bar,0,9,24
+,AshfordHills,Bluegrass,Willow Springs,Grocery,0,68,182
+,AshfordHills,Bluegrass,Willow Springs,Convenience Store,0,11,21
+,AshfordHills,Bluegrass,Willow Springs,Cafe,0,12,20
+,AshfordHills,Bluegrass,Willow Springs,Gas station,0,4,5
+,AshfordHills,Bluegrass,Willow Springs,"Grocery, Convenience Store",0,3,3
+,AshfordHills,Bluegrass,Willow Springs,"Grocery, Gas station",0,1,4
+,AshfordHills,Bluegrass,Willow Springs,"Convenience Store, Gas station",0,3,9
+,AshfordHills,Bluegrass,Willow Springs,Drugstore,1,13,17
+,AshfordHills,Bluegrass,Willow Springs,"Grocery, Drugstore",1,2,6
+,AshfordHills,Bluegrass,Willow Springs,"CVS, Drugstore",1,4,11
+,AshfordHills,Bluegrass,Willow Springs,"Gas station, Drugstore",1,8,16
+,AshfordHills,Bluegrass,Willow Springs,"Grocery, Gas station, Drugstore",1,4,12
+,AshfordHills,Bluegrass,Willow Springs,"CVS, Gas station, Drugstore",1,2,2
+,AshfordHills,Bluegrass,Xenith Hill,Bed and breakfast,0,2,6
+,AshfordHills,Bluegrass,Xenith Hill,Car wash,0,5,11
+,AshfordHills,Bluegrass,Xenith Hill,Barber,0,3,8
+,AshfordHills,Bluegrass,Xenith Hill,Restaurant,0,16,44
+,AshfordHills,Bluegrass,Xenith Hill,Gym,0,13,34
+,AshfordHills,Bluegrass,Xenith Hill,Truck repair shop,0,30,51
+,AshfordHills,Bluegrass,Xenith Hill,Ophthalmologist,1,1,2
+,AshfordHills,Bluegrass,Xenith Hill,Bar,0,33,51
+,AshfordHills,Bluegrass,Xenith Hill,Grocery,0,38,76
+,AshfordHills,Bluegrass,Xenith Hill,Convenience Store,0,10,21
+,AshfordHills,Bluegrass,Xenith Hill,Cafe,0,8,28
+,AshfordHills,Bluegrass,Xenith Hill,Gas station,0,7,8
+,AshfordHills,Bluegrass,Xenith Hill,"Grocery, Convenience Store",0,1,1
+,AshfordHills,Bluegrass,Xenith Hill,"Grocery, Gas station",0,1,2
+,AshfordHills,Bluegrass,Xenith Hill,Drugstore,1,5,15
+,AshfordHills,Bluegrass,Xenith Hill,"Grocery, Drugstore",1,1,3
+,AshfordHills,Bluegrass,Xenith Hill,"CVS, Drugstore",1,3,4
+,AshfordHills,Bluegrass,Xenith Hill,"Gas station, Drugstore",1,1,4
+,AshfordHills,Bluegrass,Xenith Hill,"Grocery, Convenience Store, Gas station",0,1,4
+,AshfordHills,Bluegrass,Xenith Hill,"Grocery, Gas station, Drugstore",1,2,3
+,AshfordHills,Bluegrass,Yellow Brook,Barber,0,2,4
+,AshfordHills,Bluegrass,Yellow Brook,Restaurant,0,6,18
+,AshfordHills,Bluegrass,Yellow Brook,Gym,0,5,18
+,AshfordHills,Bluegrass,Yellow Brook,Bar,0,2,2
+,AshfordHills,Bluegrass,Yellow Brook,Grocery,0,5,11
+,AshfordHills,Bluegrass,Yellow Brook,Convenience Store,0,2,3
+,AshfordHills,Bluegrass,Yellow Brook,Cafe,0,1,3
+,AshfordHills,Bluegrass,Yellow Brook,Gas station,0,2,6
+,AshfordHills,Bluegrass,Yellow Brook,"Gas station, Drugstore",1,1,4
+,AshfordHills,Bluegrass,Havenville,B&B,0,1,2
+,AshfordHills,Bluegrass,Havenville,Car wash,0,2,2
+,AshfordHills,Bluegrass,Havenville,Barber,0,3,9
+,AshfordHills,Bluegrass,Havenville,Restaurant,0,5,18
+,AshfordHills,Bluegrass,Havenville,Gym,0,8,20
+,AshfordHills,Bluegrass,Havenville,Repair shop(truck),0,12,16
+,AshfordHills,Bluegrass,Havenville,Bar,0,12,12
+,AshfordHills,Bluegrass,Havenville,Grocery,0,31,79
+,AshfordHills,Bluegrass,Havenville,Convenience Store,0,20,56
+,AshfordHills,Bluegrass,Havenville,Cafe,0,8,31
+,AshfordHills,Bluegrass,Havenville,Gas station,0,4,9
+,AshfordHills,Bluegrass,Havenville,"Grocery, Convenience Store",0,2,4
+,AshfordHills,Bluegrass,Havenville,"Grocery, Gas station",0,1,1
+,AshfordHills,Bluegrass,Havenville,"Convenience Store, Gas station",0,2,7
+,AshfordHills,Bluegrass,Havenville,Pharmacy,1,5,8
+,AshfordHills,Bluegrass,Havenville,"Grocery, Drugstore",1,2,3
+,AshfordHills,Bluegrass,Havenville,"Gas station, Drugstore",1,2,7
+,AshfordHills,Bluegrass,Havenville,"Grocery, CVS, Drugstore",1,1,2
+,AshfordHills,Bluegrass,Havenville,"Grocery, Gas station, Drugstore",1,1,2
+,AshfordHills,Bluegrass,Havenville,"CVS, Gas station, Drugstore",1,1,1
+,AshfordHills,Bluegrass,Havenville,Dentist,1,1,3
+----------------- END OF THE DATA -----------------,,,,,,,
+,,,,,,,
+"Data compiled by the Department of Local Affairs - Economic Unit (Contact: L. Ipsum, x3749)",,,,,,,

@@ -1,0 +1,30 @@
+#-----------------------------------------------------------------------------
+#This file contains a list of values that pynorma should treat as missing (NaN).
+#You can add or remove values to customize the NaN detection for your specific datasets.
+#- Each value should be on a new line.
+#- Lines starting with '#' are treated as comments and are ignored.
+#- Leading/trailing whitespace is automatically trimmed.
+#-----------------------------------------------------------------------------
+#--- Standard English Placeholders ---
+N/A
+NA
+NaN
+null
+Null
+NULL
+None
+(empty)
+(blank)
+#--- Common Symbols ---
+--
+?
+*
+-
+#--- User-Specific Examples (Uncomment or add your own) ---
+#Sometimes, specific numbers are used to denote missing data.
+999
+-1
+#--- Custom text placeholders used in certain systems ---
+Not Applicable
+No Data
+Missing

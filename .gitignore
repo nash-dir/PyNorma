@@ -1,0 +1,25 @@
+# Python bytecode and cache
+__pycache__/
+*.pyc
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# User-specific (사용자 정의)
+debug/
