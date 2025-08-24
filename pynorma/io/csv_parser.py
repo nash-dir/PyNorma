@@ -1,50 +1,85 @@
-import pandas as pd
-from typing import Union, Optional, Literal, Dict
+# pynorma/io/csv_parser.py
 
-# 이제 파서는 Trimmer와 Utils의 기능을 가져다 쓰기만 하면 됩니다.
-from pynorma.preprocessor import trimmer
-from pynorma.utils import clean_dataframe, detect_encoding
+import pandas as pd
+from typing import Union, Literal, Optional, Tuple, Dict
+
+# 실무를 담당할 trimmer와 각종 탐지/유틸리티 함수들을 임포트합니다.
+from pynorma.io import trimmer
+from ..utils import clean_dataframe, detect_encoding
+from ..detect.header_finder import detect_header_end_row
 
 def parse_csv(
     filepath: str,
-    encoding: Union[str, Literal["auto"]] = "auto",
     trim: Union[bool, Literal["auto"], dict] = "auto",
-    set_header: bool = True
-) -> pd.DataFrame:
+    is_header: Union[bool, int] = True,
+    delimiter: Optional[str] = None,
+    encoding: str = "auto",
+    verbose: bool = False # verbose는 현재 사용되지 않지만, 인터페이스 일관성을 위해 유지
+) -> Tuple[pd.DataFrame, Dict]:
     """
-    (개선된 방식) CSV 파일을 한 번만 읽고, Trimmer에게 후처리를 위임합니다.
+    CSV 파일을 파싱하고, trimmer를 호출하여 전처리를 수행한 후,
+    결과물과 처리 정보를 튜플 형태로 반환합니다.
 
     Args:
         filepath (str): CSV 파일 경로.
-        encoding (str or "auto", optional): 파일 인코딩. "auto"일 경우 자동으로 탐지합니다.
-        trim (bool, "auto", or dict, optional): 트림 모드. Trimmer에게 그대로 전달됩니다.
-        set_header (bool, optional): 헤더 설정 여부. Trimmer에게 그대로 전달됩니다.
+        trim (Union[bool, "auto", dict]): trimmer에게 전달될 트림 모드.
+        is_header (Union[bool, int]): 헤더 처리 방식.
+        delimiter (Optional[str]): Pandas read_csv에 전달될 구분자.
+        encoding (str): 파일 인코딩.
+        verbose (bool): 상위 parser와의 인터페이스 일관성을 위한 인자.
 
     Returns:
-        pd.DataFrame: 전처리가 완료된 데이터프레임.
+        Tuple[pd.DataFrame, Dict]:
+            - pd.DataFrame: 전처리가 완료된 데이터프레임.
+            - Dict: verbose 출력을 위한 상세 처리 정보.
     """
-    # 1. 인코딩을 자동으로 탐지합니다.
+    # 1. 인코딩 탐지: 'auto'일 경우 자동으로 인코딩을 찾습니다.
     file_encoding = detect_encoding(filepath) if encoding == "auto" else encoding
     
     try:
-        # 2. 파일을 한 번만 읽어 raw 데이터프레임을 만듭니다.
-        #    header=None으로 읽어야 모든 내용을 그대로 가져올 수 있습니다.
+        # 2. 파일 읽기: Pandas에 의존하여 파일을 한 번만 읽습니다.
+        #    - delimiter=None으로 두어 Pandas가 자동으로 탐지하도록 합니다.
+        #    - header=None으로 설정하여 모든 데이터를 그대로 읽어옵니다.
         df_raw = pd.read_csv(
             filepath,
             header=None,
             dtype=str,
             encoding=file_encoding,
-            on_bad_lines='warn' # 혹시 모를 오류 라인에 대한 처리
+            delimiter=delimiter,
+            on_bad_lines='warn'
         )
     except Exception as e:
-        print(f"Error reading CSV file with encoding '{file_encoding}': {e}")
-        # 다른 인코딩으로 재시도하거나, 더 구체적인 에러 핸들링을 추가할 수 있습니다.
+        # 파일 읽기 실패 시, 사용자에게 친절한 에러 메시지를 보여줍니다.
+        print(f"Error reading CSV file '{filepath}' with encoding '{file_encoding}': {e}")
         raise
 
-    # 3. 기본적인 클리닝을 수행합니다. (e.g., 추가적인 NaN 값 처리)
+    # 3. 기본적인 데이터 클리닝을 수행합니다.
     df_raw = clean_dataframe(df_raw)
 
-    # 4. 똑똑한 Trimmer에게 트림과 헤더 설정을 모두 위임합니다.
-    df_clean = trimmer.trim_dataframe(df_raw, trim_mode=trim, set_header=set_header)
+    # 4. is_header 옵션에 따라 헤더의 절대 위치(header_index)를 결정합니다.
+    header_index: Optional[int] = None
+    if isinstance(is_header, int):
+        # 사용자가 직접 정수 값을 지정한 경우
+        header_index = is_header
+    elif is_header is True:
+        # True일 경우, 자동으로 헤더 위치를 탐지합니다.
+        # header_finder는 파일 경로가 아닌 DataFrame을 받을 수 있도록 수정 필요
+        # 임시로 파일 경로를 넘겨주는 detect_header_row를 사용
+        # TODO: detect_header_row가 df_raw를 직접 받도록 수정
+        header_index = detect_header_end_row(df_raw) # df_raw를 직접 분석
+        if header_index == -1: # 탐지 실패 시
+            header_index = None
+
+    # is_header가 False인 경우, header_index는 그대로 None으로 유지됩니다.
+
+    # 5. trimmer에게 실무 처리를 위임하고, 결과와 상세 정보를 함께 받습니다.
+    df_clean, info = trimmer.trim_dataframe(
+        df=df_raw, 
+        trim_mode=trim,
+        # is_header가 False가 아닌 모든 경우(True 또는 int)에 헤더 설정을 시도합니다.
+        set_header=(is_header is not False),
+        header_row=header_index
+    )
     
-    return df_clean
+    # 6. 받은 결과와 정보를 그대로 상위 parser.py에 반환(보고)합니다.
+    return df_clean, info

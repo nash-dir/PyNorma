@@ -48,4 +48,4 @@ def save_dataframe(
     else:
         raise ValueError(f"지원하지 않는 파일 형식입니다: '{file_extension}'")
     
-    print(f"✅ DataFrame successfully saved to {output_path}")
+    print(f"DataFrame successfully saved to {output_path}")
