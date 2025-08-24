@@ -1,5 +1,7 @@
 # PyNorma
 
+## This project is currently under construction
+
 **"You gotta do it, you can do it, but you just don't wanna do it."**
 
 PyNorma is a Python library that provides insights and automation for preprocessing messy, real-world tabular data. It's designed for data scientists, analysts, and anyone who's tired of the tedious task of cleaning up unstructured spreadsheets.
