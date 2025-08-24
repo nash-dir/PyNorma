@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # debug/debug_excelparse.py
 from pynorma.io.xlsx_parser import parse_excel_with_header
-from pynorma.io.csv_writer import write_csv
+from pynorma.io.writer import write_csv
 
 df, header_end = parse_excel_with_header("examples/Kor119_trimmed.xlsx", verbose=True)
 

@@ -1,6 +1,6 @@
 from pynorma.io.csv_parser import parse_csv
 from pynorma.preprocessor.appender import append
-from pynorma.io.csv_writer import write_output
+from pynorma.io.writer import write_output
 
 
 df1 = parse_csv("examples/townbusiness1.csv", isheader=True, verbose=True)

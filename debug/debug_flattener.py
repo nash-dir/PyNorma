@@ -9,7 +9,7 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 from pynorma.io.csv_parser import parse_csv
-from pynorma.io.csv_writer import write_csv
+from pynorma.io.writer import write_csv
 from pynorma.preprocessor.flattener import flatten
 from pynorma.utils import detect_header_end_row
 
