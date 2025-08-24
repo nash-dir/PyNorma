@@ -74,7 +74,7 @@ def clean_dataframe(
     pd.DataFrame
         The cleaned DataFrame.
     """
-    cleaned = df.applymap(lambda x: pd.NA if isinstance(x, str) and x.strip() == "" else x)
+    cleaned = df.map(lambda x: pd.NA if isinstance(x, str) and x.strip() == "" else x)
     cleaned = replace_nan_like(cleaned, custom_na_values)
     return cleaned
 
