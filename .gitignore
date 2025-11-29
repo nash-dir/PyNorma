@@ -23,3 +23,8 @@ Thumbs.db
 
 # User-specific (사용자 정의)
 debug/
+*.log
+todo.md
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/

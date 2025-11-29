@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='pynorma',
-    version='1.0.0', # 정식 1.0 버전 명시
+    version='1.0.0a1', # 1.0 alpha
     author='nash-dir', # 작성자 이름
     description="A smart tool for preprocessing messy tabular data.", # 짧은 설명
     long_description=long_description, # README.md 내용
