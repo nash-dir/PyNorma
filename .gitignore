@@ -22,7 +22,7 @@ env/
 Thumbs.db
 
 # User-specific (사용자 정의)
-debug/
+/debug/
 *.log
 todo.md
 
