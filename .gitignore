@@ -1,11 +1,19 @@
-# Python bytecode and cache
+# ═══════════════════════════════════════════
+# Python
+# ═══════════════════════════════════════════
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.pyo
 
 # Distribution / packaging
 build/
 dist/
 *.egg-info/
+*.egg
+sdist/
+wheels/
+pip-wheel-metadata/
 
 # Virtual environments
 venv/
@@ -13,22 +21,54 @@ venv/
 env/
 .env/
 
-# IDE / Editor specific files
+# ═══════════════════════════════════════════
+# Testing
+# ═══════════════════════════════════════════
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+*.cover
+coverage.xml
+
+# ═══════════════════════════════════════════
+# IDE / Editor
+# ═══════════════════════════════════════════
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
 
-# OS-specific files
+# ═══════════════════════════════════════════
+# OS
+# ═══════════════════════════════════════════
 .DS_Store
 Thumbs.db
+desktop.ini
+ehthumbs.db
 
-# User-specific (사용자 정의)
-/debug/
-/specimen/
-*.log
-todo.md
-
-# Jupyter Notebook Checkpoints
+# ═══════════════════════════════════════════
+# Jupyter
+# ═══════════════════════════════════════════
 .ipynb_checkpoints/
+
+# ═══════════════════════════════════════════
+# Project-specific
+# ═══════════════════════════════════════════
+
+# Specimen data (test data, not tracked)
+/specimen/
+
+# Debug scripts
+/debug/
 
 # Generated reports
 report/
+
+# Logs and temp
+*.log
+todo.md
