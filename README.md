@@ -7,7 +7,9 @@ PyNorma is a Python library that provides insights and automation for preprocess
 ## Key Features
 
 - **Ensemble Table Detection**: 6 competing strategies auto-detect the data region within messy files, scored and selected by an internal quality metric — no ground truth required.
+- **Multi-Table Detection**: Automatically finds multiple tables within a single sheet by detecting empty-row gaps between data segments.
 - **Pipeline API**: A fluent, chainable interface connects detection → cleaning → transformation in one call.
+- **1NF Violation Detection**: Automatically identifies columns containing multi-valued cells (e.g., `"apple, banana"`) using atom overlap-ratio analysis.
 - **Preprocessing Toolkit**:
     - `Atomizer`: Splits cells with multiple values into distinct rows or columns (1NF normalization).
     - `Flattener`: Converts wide, multi-level header tables into a tidy, long format.
@@ -46,11 +48,31 @@ df = (Pipeline("data.xlsx", strategy="D")
       .result())
 ```
 
+### Multi-table sheets
+
+```python
+p = Pipeline("multi_table_sheet.xlsx")
+p.detect().clean()
+
+for i, table in enumerate(p.all_tables()):
+    print(f"Table {i}: {table.shape}")
+```
+
+### Detect multi-valued columns (1NF violations)
+
+```python
+from pynorma import detect_multivalue_columns
+
+result = detect_multivalue_columns(df)
+# [('Fruits', ',', 1.0)]  → Fruits column has comma-separated lists
+```
+
 ### Legacy API
 
 ```python
 import pynorma
 
+# parse() now uses ensemble detection internally (with legacy fallback)
 df = pynorma.parse("data.csv", trim="auto")
 ```
 
@@ -59,8 +81,8 @@ df = pynorma.parse("data.csv", trim="auto")
 ```
 Raw File ──→ Detection ──→ Cleaning ──→ DataFrame ──→ Preprocessor ──→ Clean Output
              6 strategies    common       pandas       atomize
-             quality_score   pipeline                  clarify
-             auto-select                               merge / flatten
+             multi-table     pipeline                  clarify
+             quality_score                             merge / flatten
 ```
 
 ### Detection: Table as N × 5 Integers
@@ -71,7 +93,9 @@ PyNorma reduces the table detection problem to finding **N tables**, each descri
 (header, top, left, bottom, right)
 ```
 
-Six strategies compete on each file, and the best is selected via a ground-truth-free `quality_score` based on type consistency, fill uniformity, header confidence, and boundary sharpness.
+Six strategies compete on each file, and the best is selected via a ground-truth-free `quality_score` based on type consistency, fill uniformity, header confidence, boundary sharpness, coverage, and region size.
+
+For multi-table sheets, gap-based splitting runs first — consecutive empty rows signal table boundaries.
 
 | Strategy | Approach | Avg Score |
 |----------|----------|-----------|
@@ -84,6 +108,13 @@ Six strategies compete on each file, and the best is selected via a ground-truth
 
 Benchmarked on **36 specimens** (24 real-world + 12 adversarial edge cases) with **60 regression tests**.
 
+### 1NF Violation Detection
+
+`detect_multivalue_columns()` uses atom overlap-ratio analysis:
+- For each column, tries candidate delimiters (`,;/|`)
+- Splits cells into atoms and checks cross-cell overlap
+- High overlap ratio = multi-valued column (atoms appear in other cells)
+
 ## Project Structure
 
 ```
@@ -91,12 +122,13 @@ pynorma/
 ├── pynorma/                    # Main package
 │   ├── pipeline.py             # Pipeline API (detection → preprocessor)
 │   ├── io/                     # File I/O (CSV, XLSX)
+│   │   └── trimmer.py          # Ensemble detection → legacy fallback
 │   ├── detect/                 # Table region detection (legacy)
 │   └── preprocessor/           # Atomizer, Clarifier, Merger, Flattener, Appender
 ├── specimen/                   # Test data (36 files)
 │   └── benchmark/              # Ensemble detection framework
-│       ├── core.py             # TableRegion, quality_score, clean_region
-│       ├── preprocess.py       # detect() + preprocess() public API
+│       ├── core.py             # TableRegion, quality_score, split_tables_by_gap
+│       ├── preprocess.py       # detect() + preprocess() (multi-table aware)
 │       ├── strategies/         # 6 competing detection strategies
 │       └── tests/              # 60 regression tests
 └── tests/                      # Package-level tests

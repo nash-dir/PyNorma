@@ -1,13 +1,22 @@
-"""Atomizer — split multi-valued cells into separate rows or columns."""
+"""Atomizer — split multi-valued cells into separate rows or columns.
+
+Includes two detection methods:
+  - detect_feature_delimiter: proportion-based delimiter detection (original)
+  - detect_multivalue_columns: overlap-ratio based 1NF violation detection (new)
+"""
 
 import logging
-from typing import List, Optional, Union
+from collections import Counter
+from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 
 from .. import config
 
 logger = logging.getLogger("pynorma")
+
+# Default in-cell delimiter candidates
+INTRA_CELL_DELIMITERS = [",", ";", "/", "|"]
 
 
 def detect_feature_delimiter(
@@ -58,6 +67,114 @@ def detect_feature_delimiter(
             best_delim = delim
 
     return best_delim if max_score > min_score else None
+
+
+def detect_multivalue_columns(
+    df: pd.DataFrame,
+    candidates: Optional[List[str]] = None,
+    *,
+    min_overlap: float = 0.3,
+    min_multi_ratio: float = 0.1,
+) -> List[Tuple[str, str, float]]:
+    """Detect columns violating 1NF using atom overlap ratio.
+
+    For each column, tries candidate in-cell delimiters. If splitting
+    produces atoms that re-appear across other cells in the same column,
+    the column is flagged as multi-valued.
+
+    The key insight: correct splitting produces atoms that overlap with
+    single-valued cells. Wrong splitting produces unique fragments.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The DataFrame to analyse.
+    candidates : list of str, optional
+        In-cell delimiter candidates. Defaults to ``,;/|``.
+    min_overlap : float
+        Minimum overlap ratio to flag a column (0~1).
+    min_multi_ratio : float
+        Minimum proportion of cells that must contain > 1 atom.
+
+    Returns
+    -------
+    list of (column_name, delimiter, overlap_ratio)
+        Sorted by overlap_ratio descending. Only columns above threshold.
+
+    Examples
+    --------
+    >>> df = pd.DataFrame({
+    ...     "Name": ["Alice", "Bob", "Charlie"],
+    ...     "Fruits": ["apple", "apple, banana", "apple, banana, carrot"],
+    ... })
+    >>> detect_multivalue_columns(df)
+    [('Fruits', ',', 0.857)]
+    """
+    if candidates is None:
+        candidates = INTRA_CELL_DELIMITERS
+
+    results = []
+
+    for col in df.columns:
+        series = df[col].dropna().astype(str)
+        if series.empty or len(series) < 3:
+            continue
+
+        best_delim = None
+        best_overlap = 0.0
+
+        for delim in candidates:
+            # Split all cells by this delimiter
+            split_cells = series.apply(lambda x, d=delim: [s.strip() for s in x.split(d) if s.strip()])
+
+            # Count cells with multiple atoms
+            multi_mask = split_cells.apply(len) > 1
+            multi_ratio = multi_mask.mean()
+
+            if multi_ratio < min_multi_ratio:
+                continue
+
+            # Collect all individual atoms
+            all_atoms = Counter()
+            for atoms in split_cells:
+                for a in atoms:
+                    all_atoms[a] += 1
+
+            if not all_atoms:
+                continue
+
+            # Overlap: atoms from multi-valued cells that appear in other cells
+            # (as single values or in other multi-valued cells)
+            multi_atoms = set()
+            for atoms in split_cells[multi_mask]:
+                multi_atoms.update(atoms)
+
+            single_atoms = set()
+            for atoms in split_cells[~multi_mask]:
+                single_atoms.update(atoms)
+
+            if not multi_atoms:
+                continue
+
+            # Overlap = proportion of multi-cell atoms that also appear elsewhere
+            # Also count atoms that appear in > 1 multi-valued cell
+            overlap_count = 0
+            for atom in multi_atoms:
+                if atom in single_atoms or all_atoms[atom] > 1:
+                    overlap_count += 1
+
+            overlap_ratio = overlap_count / len(multi_atoms)
+
+            if overlap_ratio > best_overlap:
+                best_overlap = overlap_ratio
+                best_delim = delim
+
+        if best_delim and best_overlap >= min_overlap:
+            results.append((col, best_delim, round(best_overlap, 3)))
+
+    # Sort by overlap descending
+    results.sort(key=lambda x: x[2], reverse=True)
+    return results
 
 
 def atomize_by_column(

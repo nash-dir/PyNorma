@@ -3,6 +3,10 @@ Smart DataFrame trimmer.
 
 Combines table-area detection with header assignment to produce a
 cleanly cropped DataFrame from a raw, messy input.
+
+Supports two detection backends:
+  - **ensemble** (default): 6 competing strategies via quality_score
+  - **legacy**: gradient-based table_finder (fallback)
 """
 
 import logging
@@ -14,6 +18,37 @@ from pynorma.detect.table_finder import find_robust_table_area
 from pynorma.detect.header_finder import detect_header_end_row
 
 logger = logging.getLogger("pynorma")
+
+
+def _try_ensemble_detect(df: pd.DataFrame) -> Optional[Tuple[int, int, int, int, int]]:
+    """Try ensemble detection, returning (header, top, left, bottom, right) or None."""
+    try:
+        import sys
+        from pathlib import Path
+        specimen_dir = Path(__file__).resolve().parent.parent.parent / "specimen" / "benchmark"
+        if specimen_dir.exists() and str(specimen_dir.parent) not in sys.path:
+            sys.path.insert(0, str(specimen_dir.parent))
+
+        from benchmark.core import TableRegion, quality_score
+        from benchmark.preprocess import detect as ensemble_detect
+
+        # Convert DataFrame to grid
+        grid = []
+        for idx in range(len(df)):
+            row = [str(v) if pd.notna(v) else "" for v in df.iloc[idx]]
+            grid.append(row)
+
+        if not grid:
+            return None
+
+        regions = ensemble_detect(grid)
+        if not regions:
+            return None
+
+        r = regions[0]
+        return (r.header, r.top, r.left, r.bottom, r.right)
+    except Exception:
+        return None
 
 
 def trim_dataframe(
@@ -29,7 +64,7 @@ def trim_dataframe(
     df : pd.DataFrame
         The raw DataFrame to trim.
     trim_mode : bool or ``"auto"`` or dict
-        - ``"auto"``: auto-detect the table region.
+        - ``"auto"``: auto-detect the table region (ensemble → legacy fallback).
         - ``False``: skip trimming.
         - ``dict``: manual coordinates ``{'top', 'bottom', 'left', 'right'}``.
     set_header : bool
@@ -49,10 +84,23 @@ def trim_dataframe(
 
     top, left, bottom, right = 0, 0, original_shape[0], original_shape[1]
     top_offset = 0
+    ensemble_header = None
 
     # 1. Trim based on *trim_mode*
     if trim_mode == "auto":
-        top, left, bottom, right = find_robust_table_area(df)
+        # Try ensemble detection first
+        result = _try_ensemble_detect(df)
+        if result is not None:
+            ensemble_header, top, left, bottom, right = result
+            bottom = min(bottom + 1, original_shape[0])  # TableRegion.bottom is inclusive
+            right = min(right, original_shape[1])
+            logger.debug("Trimmer: ensemble detection → header=%d, data=[%d..%d], cols=[%d..%d)",
+                         ensemble_header, top, bottom, left, right)
+        else:
+            # Fallback to legacy gradient-based detection
+            top, left, bottom, right = find_robust_table_area(df)
+            logger.debug("Trimmer: legacy detection → [%d..%d, %d..%d)", top, bottom, left, right)
+
         df_trimmed = df.iloc[top:bottom, left:right].reset_index(drop=True)
         top_offset = top
     elif isinstance(trim_mode, dict):
@@ -73,12 +121,17 @@ def trim_dataframe(
     if set_header and not df_trimmed.empty:
         header_to_set = header_row
 
-        # Auto-detect if no explicit position was given
         if header_to_set is None:
-            last_comment_row = detect_header_end_row(df_trimmed)
-            if last_comment_row != -1:
-                header_to_set = last_comment_row + 1  # relative
-                final_header_row_abs = top_offset + header_to_set
+            if ensemble_header is not None:
+                # Use header from ensemble detection (relative to trimmed area)
+                header_to_set = ensemble_header - top_offset
+                final_header_row_abs = ensemble_header
+            else:
+                # Auto-detect via legacy header_finder
+                last_comment_row = detect_header_end_row(df_trimmed)
+                if last_comment_row != -1:
+                    header_to_set = last_comment_row + 1  # relative
+                    final_header_row_abs = top_offset + header_to_set
 
         if header_to_set is not None:
             # Convert to relative index if the value came from the caller
@@ -100,6 +153,8 @@ def trim_dataframe(
         "left": left,
         "right": right,
         "header_row_abs": final_header_row_abs,
+        "detection_method": "ensemble" if ensemble_header is not None else "legacy",
     }
 
     return df_trimmed, trim_info
+

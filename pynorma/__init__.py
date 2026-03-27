@@ -8,7 +8,7 @@ spreadsheets, Excel files, and CSV data.
 from pynorma.io.parser import parse
 from pynorma.io.writer import save_dataframe
 from pynorma.preprocessor.flattener import flatten
-from pynorma.preprocessor.atomizer import atomize_by_column, atomize_by_row
+from pynorma.preprocessor.atomizer import atomize_by_column, atomize_by_row, detect_multivalue_columns
 from pynorma.preprocessor.clarifier import clarify
 from pynorma.preprocessor.appender import append
 from pynorma.preprocessor.merger import merge
@@ -21,6 +21,7 @@ __all__ = [
     "flatten",
     "atomize_by_column",
     "atomize_by_row",
+    "detect_multivalue_columns",
     "clarify",
     "append",
     "merge",
