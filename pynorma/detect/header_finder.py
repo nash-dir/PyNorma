@@ -1,35 +1,60 @@
+"""
+Detect the boundary row between header/comment rows and data rows.
+
+Uses type-signature analysis: each row is converted to a tuple of
+``('string', 'numeric', 'empty')`` labels, and the pair of consecutive
+rows with the largest signature change is identified as the header
+boundary.
+"""
+
 import pandas as pd
 from typing import Tuple
 
+from pynorma.utils import classify_cell
+
+
 def _get_row_type_signature(row: pd.Series) -> Tuple[str, ...]:
-    """DataFrame의 한 행(row)을 받아 각 셀의 타입으로 구성된 시그니처를 생성합니다."""
-    types = []
-    for value in row:
-        if pd.isna(value) or str(value).strip() == '':
-            types.append('empty')
-        else:
-            try:
-                # 정수인지 먼저 확인하여 '1.0' 같은 실수를 숫자로 오인하는 것을 방지
-                if str(value).isdigit():
-                    types.append('numeric')
-                else:
-                    float(value)
-                    types.append('numeric')
-            except (ValueError, TypeError):
-                types.append('string')
-    return tuple(types)
+    """Return a per-cell type signature for a single DataFrame row.
 
-def detect_header_end_row(df: pd.DataFrame, max_search_rows: int = 20) -> int:
+    Each cell is classified as ``'empty'``, ``'numeric'``, or ``'string'``
+    using the shared :func:`pynorma.utils.classify_cell` classifier.
     """
-    (Legacy 로직 개선) 연속된 행들의 데이터 타입 시그니처 변화를 분석하여
-    가장 큰 변화가 일어나는 지점을 헤더의 끝(마지막 주석 행)으로 탐지합니다.
+    return tuple(classify_cell(v) for v in row)
 
-    Args:
-        df (pd.DataFrame): 탐색할 데이터프레임.
-        max_search_rows (int): 헤더를 탐색할 최대 행 수.
 
-    Returns:
-        int: 마지막 주석 행의 인덱스. 찾지 못하면 -1을 반환합니다.
+def detect_header_end_row(
+    df: pd.DataFrame,
+    max_search_rows: int = 20,
+    *,
+    numeric_row_threshold: float = 0.8,
+    string_row_threshold: float = 0.6,
+    min_diff_count: int = 2,
+) -> int:
+    """Detect the last header (or comment) row by analysing type-signature changes.
+
+    Scans the first *max_search_rows* rows and finds the pair of
+    consecutive rows with the largest type-signature difference.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame to analyse.
+    max_search_rows : int
+        Maximum number of rows to scan from the top.
+    numeric_row_threshold : float
+        If a row is more than this fraction numeric it is likely data,
+        not a comment row, and is skipped as a candidate boundary.
+    string_row_threshold : float
+        If the first row exceeds this fraction of string cells it is
+        assumed to be a single-row header.
+    min_diff_count : int
+        Minimum number of type changes required to consider a boundary
+        meaningful.
+
+    Returns
+    -------
+    int
+        Index of the last comment/header row, or ``-1`` if none found.
     """
     if len(df) < 2:
         return -1
@@ -40,27 +65,26 @@ def detect_header_end_row(df: pd.DataFrame, max_search_rows: int = 20) -> int:
     max_diff = -1
     header_end_index = -1
 
-    # 연속된 두 행의 타입 시그니처를 비교합니다.
-    for i in range(1,search_range):
+    # Compare consecutive row type signatures
+    for i in range(1, search_range):
         sig1 = signatures[i]
-        sig2 = signatures[i+1]
-        
-        # 타입이 다른 셀의 개수를 계산합니다.
+        sig2 = signatures[i + 1]
+
         diff_count = sum(1 for t1, t2 in zip(sig1, sig2) if t1 != t2)
-        
-        # 변화량이 가장 큰 지점을 헤더의 끝으로 기록합니다.
-        # 단, 현재 행이 대부분 숫자로만 이루어진 경우는 주석일 확률이 높으므로 건너뜁니다.
-        is_mostly_numeric = sig1.count('numeric') / len(sig1) > 0.8
-        
+
+        # Skip rows that are mostly numeric (likely data, not header)
+        is_mostly_numeric = sig1.count("numeric") / len(sig1) > numeric_row_threshold
+
         if diff_count > max_diff and not is_mostly_numeric:
             max_diff = diff_count
             header_end_index = i
-            
-    # 신뢰도 체크: 변화량이 최소 2 이상이어야 유의미한 경계로 판단
-    if max_diff >= 2:
+
+    # Confidence check: require at least *min_diff_count* type changes
+    if max_diff >= min_diff_count:
         return header_end_index
     else:
-        # 변화가 거의 없다면, 첫 줄이 헤더일 가능성을 확인
-        if signatures and signatures[0].count('string') / len(signatures[0]) > 0.6:
-            return 0 # 첫 줄이 헤더인 경우
+        # If there is barely any change, check whether the first row
+        # looks like a text header.
+        if signatures and signatures[0].count("string") / len(signatures[0]) > string_row_threshold:
+            return 0  # single-row header
         return -1

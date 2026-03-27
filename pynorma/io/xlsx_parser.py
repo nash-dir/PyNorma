@@ -1,71 +1,107 @@
-import pandas as pd
-import openpyxl
-from typing import Union, Literal
+"""XLSX file parser for PyNorma."""
 
-# 이제 파서는 Trimmer와 Utils의 기능을 가져다 쓰기만 하면 됩니다.
+import logging
+from typing import Dict, Literal, Optional, Tuple, Union
+
+import openpyxl
+import openpyxl.worksheet.worksheet
+import pandas as pd
+
 from pynorma.io.trimmer import trim_dataframe
 from pynorma.utils import clean_dataframe
+from pynorma.detect.header_finder import detect_header_end_row
+
+logger = logging.getLogger("pynorma")
+
 
 def _unmerge_cells(ws: openpyxl.worksheet.worksheet.Worksheet) -> None:
-    """
-    (엑셀 고유 기능) 워크시트의 모든 병합된 셀을 해제하고 첫 셀의 값으로 채웁니다.
-    """
-    # 이 함수는 엑셀 파일 처리의 고유한 부분이므로 여기에 남겨둡니다.
+    """Unmerge every merged-cell range and fill each cell with the top-left value."""
     for merged_range in list(ws.merged_cells.ranges):
         min_col, min_row, max_col, max_row = merged_range.bounds
-        top_left_cell_value = ws.cell(row=min_row, column=min_col).value
+        top_left_value = ws.cell(row=min_row, column=min_col).value
         ws.unmerge_cells(str(merged_range))
         for row in range(min_row, max_row + 1):
             for col in range(min_col, max_col + 1):
-                ws.cell(row=row, column=col).value = top_left_cell_value
+                ws.cell(row=row, column=col).value = top_left_value
 
 
 def parse_xlsx(
     filepath: str,
-    sheet: Union[int, str, None] = None,
     trim: Union[bool, Literal["auto"], dict] = "auto",
-    set_header: bool = True
-) -> pd.DataFrame:
-    """
-    (개선된 방식) XLSX 파일을 한 번만 읽고, Trimmer에게 후처리를 위임합니다.
+    is_header: Union[bool, int] = True,
+    sheet_name: Union[str, int, None] = None,
+    encoding: str = "auto",
+    verbose: bool = False,
+) -> Tuple[pd.DataFrame, Dict]:
+    """Parse an XLSX file and return the preprocessed DataFrame with metadata.
 
-    Args:
-        filepath (str): XLSX 파일 경로.
-        sheet (int, str, or None), optional): 읽어올 시트 이름 또는 번호. None일 경우 첫 번째 시트를 읽습니다.
-        trim (bool, "auto", or dict, optional): 트림 모드. Trimmer에게 그대로 전달됩니다.
-        set_header (bool, optional): 헤더 설정 여부. Trimmer에게 그대로 전달됩니다.
+    The function signature mirrors :func:`csv_parser.parse_csv` so that
+    the top-level ``parse()`` can call both sub-parsers uniformly.
 
-    Returns:
-        pd.DataFrame: 전처리가 완료된 데이터프레임.
+    Parameters
+    ----------
+    filepath : str
+        Path to the Excel file.
+    trim : bool or ``"auto"`` or dict
+        Trimming mode passed to the trimmer.
+    is_header : bool or int
+        Header detection mode.
+    sheet_name : str or int or None
+        Sheet to read.  ``None`` selects the active (first) sheet.
+    encoding : str
+        Reserved for interface consistency (openpyxl handles encoding
+        internally).
+    verbose : bool
+        Reserved for interface consistency with the top-level parser.
+
+    Returns
+    -------
+    tuple of (pd.DataFrame, dict)
+        The preprocessed DataFrame and a metadata dict for verbose output.
     """
     try:
-        # data_only=True는 수식 대신 계산된 값을 가져옵니다.
         wb = openpyxl.load_workbook(filepath, data_only=True)
-        
-        if sheet is None:
-            ws = wb.active
-        elif isinstance(sheet, str):
-            ws = wb[sheet]
-        elif isinstance(sheet, int):
-            ws = wb.worksheets[sheet]
-        else:
-            raise TypeError("The 'sheet' argument must be a string, an integer, or None.")
 
+        if sheet_name is None:
+            ws = wb.active
+        elif isinstance(sheet_name, str):
+            ws = wb[sheet_name]
+        elif isinstance(sheet_name, int):
+            ws = wb.worksheets[sheet_name]
+        else:
+            raise TypeError("'sheet_name' must be a string, an integer, or None.")
     except Exception as e:
-        print(f"Error opening or finding sheet in Excel file: {e}")
+        logger.error("Failed to open Excel file '%s': %s", filepath, e)
         raise
 
-    # 1. 엑셀의 고유 특성인 '셀 병합'을 먼저 처리합니다.
+    detected_sheet_name = ws.title
+
+    # 1. Handle Excel-specific merged cells
     _unmerge_cells(ws)
 
-    # 2. 값만 추출하여 raw 데이터프레임을 만듭니다.
+    # 2. Build raw DataFrame from cell values
     data = ws.values
     df_raw = pd.DataFrame(data)
-    
-    # 3. 기본적인 클리닝을 수행합니다.
+
+    # 3. Basic cleaning
     df_raw = clean_dataframe(df_raw)
 
-    # 4. 똑똑한 Trimmer에게 트림과 헤더 설정을 모두 위임합니다.
-    df_clean = trim_dataframe(df_raw, trim_mode=trim, set_header=set_header)
-    
-    return df_clean
+    # 4. Determine header position
+    header_index: Optional[int] = None
+    if isinstance(is_header, int):
+        header_index = is_header
+    elif is_header is True:
+        header_index = detect_header_end_row(df_raw)
+        if header_index == -1:
+            header_index = None
+
+    # 5. Delegate to the trimmer
+    df_clean, info = trim_dataframe(
+        df=df_raw,
+        trim_mode=trim,
+        set_header=(is_header is not False),
+        header_row=header_index,
+    )
+
+    info["detected_sheet"] = detected_sheet_name
+    return df_clean, info

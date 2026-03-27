@@ -1,0 +1,54 @@
+{
+    "townbusiness1.csv": {
+        "description": "95x6 CSV with 6 header/comment rows at top, 3 footer rows at bottom, data in cols 1-5",
+        "raw_shape": [95, 6],
+        "expected_top_range": [6, 6],
+        "expected_left_range": [1, 1],
+        "expected_bottom_range": [89, 92],
+        "expected_right_range": [6, 6],
+        "expected_min_data_rows": 80,
+        "expected_min_data_cols": 5,
+        "poison_strings": ["This data is improvised", "NOTE:", "Preliminary estimates", "Data compiled by"],
+        "notes": "Row 0-5: comment/header block. Row 6: column headers (County/Town/Business/count/staff). Col 0: always null padding."
+    },
+    "townbusiness2.csv": {
+        "description": "119x5 clean CSV with no header comments, data starts at row 0",
+        "raw_shape": [119, 5],
+        "expected_top_range": [0, 0],
+        "expected_left_range": [0, 0],
+        "expected_bottom_range": [119, 119],
+        "expected_right_range": [5, 5],
+        "expected_min_data_rows": 115,
+        "expected_min_data_cols": 5,
+        "poison_strings": [],
+        "notes": "Clean file, no trimming needed. All 119 rows are data."
+    },
+    "townbusiness3.csv": {
+        "description": "139x8 CSV with 6 header/comment rows at top, 3 footer rows at bottom, data in cols 1-7",
+        "raw_shape": [139, 8],
+        "expected_top_range": [6, 6],
+        "expected_left_range": [1, 1],
+        "expected_bottom_range": [133, 136],
+        "expected_right_range": [8, 8],
+        "expected_min_data_rows": 120,
+        "expected_min_data_cols": 7,
+        "poison_strings": ["This data is improvised", "NOTE:", "Preliminary estimates", "Data compiled by", "BEGIN DATA", "END OF THE"],
+        "notes": "Row 0-5: comments. Row 6: column headers (County/City/Town/Business/License/count/staff). Col 0: always null. Rows 136-138: footer."
+    },
+    "Kor119.xlsx": {
+        "description": "31x152 XLSX with 7 metadata rows, 3-level header (rows 7-9), 18 data rows, 2 note rows",
+        "raw_shape": [31, 152],
+        "expected_top_range": [7, 9],
+        "expected_left_range": [1, 1],
+        "expected_bottom_range": [27, 28],
+        "expected_right_range": [150, 152],
+        "expected_min_data_rows": 15,
+        "expected_min_data_cols": 100,
+        "poison_strings": ["Table ID", "Table Name", "Reference Period", "Source", "Table URL", "Notes", "*The data for"],
+        "border_expected": {
+            "top": 7, "left": 1, "bottom": 28, "right": 152,
+            "notes": "Borders start at row 8 (1-indexed) = row 7 (0-indexed). All data cells are bordered with 'thin' style."
+        },
+        "notes": "Rows 0-6: metadata (Table ID, Name, Period, Source, URL, disclaimer, blank). Rows 7-9: 3-level header with merged cells. Rows 10-27: data. Rows 28-30: notes/disclaimer."
+    }
+}

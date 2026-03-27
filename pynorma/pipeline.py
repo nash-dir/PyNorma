@@ -1,0 +1,342 @@
+"""
+pipeline.py — Full PyNorma pipeline: Detection → DataFrame → Preprocessor.
+
+Bridge connecting the ensemble TableRegion detection system to the existing
+preprocessor modules (atomizer, clarifier, merger, flattener, appender).
+
+Usage:
+    import pynorma
+    from pynorma.pipeline import Pipeline
+
+    # Simple — parse + detect + clean in one call
+    df = Pipeline("data.csv").run()
+
+    # Full control
+    p = Pipeline("data.xlsx", strategy="D")
+    p.detect()                     # Phase 1: find tables
+    p.clean()                      # Phase 2: clean within regions
+    p.atomize(cols=["Tags"])       # Phase 3: explode multi-valued cells
+    p.clarify("업종", dict_path)   # Phase 4: standardize values
+    p.merge(sum_columns=["매출"])  # Phase 5: deduplicate
+    df = p.result()
+"""
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Optional, Union, List
+
+import pandas as pd
+
+logger = logging.getLogger("pynorma")
+
+# Lazy imports to avoid circular deps at module level
+_DETECT_AVAILABLE = True  # Will be checked on first use
+
+
+def _import_detection():
+    """Import detection modules (specimen/benchmark is separate from pynorma package)."""
+    import sys
+    # Add specimen directory to path
+    specimen_benchmark = Path(__file__).resolve().parent.parent / "specimen" / "benchmark"
+    if specimen_benchmark.exists() and str(specimen_benchmark.parent) not in sys.path:
+        sys.path.insert(0, str(specimen_benchmark.parent))
+    try:
+        from benchmark.core import TableRegion, quality_score, clean_region, read_specimen
+        from benchmark.preprocess import detect as ensemble_detect
+        return TableRegion, quality_score, clean_region, read_specimen, ensemble_detect
+    except ImportError:
+        return None
+
+
+class Pipeline:
+    """Full PyNorma pipeline: Detection → DataFrame → Preprocessor.
+
+    Parameters
+    ----------
+    source : str or Path or pd.DataFrame
+        File path or pre-loaded DataFrame.
+    strategy : str, optional
+        Detection strategy: "A"~"F" or None (run-all auto-select).
+    sheet_name : str or int, optional
+        For XLSX files, which sheet to read.
+
+    Examples
+    --------
+    >>> df = Pipeline("messy_data.csv").run()
+    >>> df = Pipeline("report.xlsx", strategy="D").run()
+    """
+
+    def __init__(
+        self,
+        source: Union[str, Path, pd.DataFrame],
+        *,
+        strategy: Optional[str] = None,
+        sheet_name: Optional[Union[str, int]] = None,
+    ):
+        self._source = source
+        self._strategy = strategy
+        self._sheet_name = sheet_name
+        self._df: Optional[pd.DataFrame] = None
+        self._tables: list[pd.DataFrame] = []
+        self._regions = []
+        self._grid = None
+        self._log: list[str] = []
+
+    # ──────────────────────────────────────
+    # Phase 1: Detection
+    # ──────────────────────────────────────
+
+    def detect(self) -> "Pipeline":
+        """Detect table regions using ensemble strategies.
+
+        Uses the benchmark TableRegion system with quality_score
+        auto-selection when no strategy is specified.
+        """
+        modules = _import_detection()
+
+        if modules is None:
+            # Fallback: use pynorma.parse() without ensemble detection
+            self._log.append("Detection: fallback to pynorma.parse()")
+            from pynorma.io.parser import parse
+            path = str(self._source) if isinstance(self._source, (str, Path)) else None
+            if path:
+                self._df = parse(path, sheet_name=self._sheet_name)
+                self._tables = [self._df]
+            elif isinstance(self._source, pd.DataFrame):
+                self._df = self._source
+                self._tables = [self._df]
+            return self
+
+        TableRegion, quality_score, clean_region, read_specimen, ensemble_detect = modules
+
+        if isinstance(self._source, pd.DataFrame):
+            # Convert DataFrame to grid for detection
+            grid = [list(self._source.columns)] + self._source.values.tolist()
+            grid = [[str(c) if c is not None else "" for c in row] for row in grid]
+        else:
+            grid, _ = read_specimen(Path(self._source))
+
+        self._grid = grid
+        self._regions = ensemble_detect(grid, strategy=self._strategy)
+
+        self._log.append(
+            f"Detection: {len(self._regions)} table(s) found "
+            f"(strategy={'auto' if not self._strategy else self._strategy})"
+        )
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 2: Cleaning
+    # ──────────────────────────────────────
+
+    def clean(self) -> "Pipeline":
+        """Apply common cleaning pipeline to detected regions.
+
+        Converts each detected TableRegion into a clean pd.DataFrame.
+        """
+        modules = _import_detection()
+
+        if not self._regions or not self._grid or modules is None:
+            if self._df is not None:
+                self._tables = [self._df]
+            self._log.append("Clean: using existing DataFrame (no regions)")
+            return self
+
+        _, _, clean_region, _, _ = modules
+
+        self._tables = []
+        for i, region in enumerate(self._regions):
+            cleaned_rows = clean_region(self._grid, region)
+            if cleaned_rows and len(cleaned_rows) >= 2:
+                header = cleaned_rows[0]
+                data = cleaned_rows[1:]
+                df = pd.DataFrame(data, columns=header)
+                self._tables.append(df)
+                self._log.append(
+                    f"Clean: table {i} → {df.shape[0]} rows × {df.shape[1]} cols "
+                    f"(region: header={region.header}, "
+                    f"rows=[{region.top}..{region.bottom}], "
+                    f"cols=[{region.left}..{region.right}))"
+                )
+
+        if self._tables:
+            self._df = self._tables[0]
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 3: Atomize
+    # ──────────────────────────────────────
+
+    def atomize(
+        self,
+        cols: Optional[Union[str, List[str]]] = None,
+        delimiter: Optional[str] = None,
+        mode: str = "column",
+    ) -> "Pipeline":
+        """Atomize multi-valued cells (1NF normalization).
+
+        Parameters
+        ----------
+        cols : str or list of str, optional
+            Columns to atomize. None=auto-detect.
+        delimiter : str, optional
+            In-cell delimiter. None=auto-detect.
+        mode : "column" or "row"
+            "column" = explode (more rows),
+            "row" = split (more columns).
+        """
+        from pynorma.preprocessor.atomizer import atomize_by_column, atomize_by_row
+
+        if self._df is None:
+            return self
+
+        if mode == "column":
+            self._df = atomize_by_column(self._df, atm_cols=cols, delimiter=delimiter)
+            self._log.append(f"Atomize (column): {self._df.shape}")
+        else:
+            self._df = atomize_by_row(
+                self._df, atm_cols=cols or [], delimiter=delimiter
+            )
+            self._log.append(f"Atomize (row): {self._df.shape}")
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 4: Clarify
+    # ──────────────────────────────────────
+
+    def clarify(
+        self,
+        column: str,
+        dict_path: str,
+        sum_columns: Optional[List[str]] = None,
+    ) -> "Pipeline":
+        """Standardize column values using a dictionary mapping.
+
+        Parameters
+        ----------
+        column : str
+            Column to standardize.
+        dict_path : str
+            Path to clarification dictionary CSV.
+        sum_columns : list of str, optional
+            Numeric columns to aggregate when merging duplicates.
+        """
+        from pynorma.preprocessor.clarifier import clarify
+
+        if self._df is None:
+            return self
+
+        self._df = clarify(self._df, column, dict_path, sum_columns=sum_columns)
+        self._log.append(f"Clarify: column='{column}', shape={self._df.shape}")
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 5: Merge
+    # ──────────────────────────────────────
+
+    def merge(self, sum_columns: Union[str, List[str]]) -> "Pipeline":
+        """Deduplicate rows by summing numeric columns.
+
+        Parameters
+        ----------
+        sum_columns : str or list of str
+            Numeric columns to aggregate.
+        """
+        from pynorma.preprocessor.merger import merge
+
+        if self._df is None:
+            return self
+
+        self._df = merge(self._df, sum_column=sum_columns)
+        self._log.append(f"Merge: shape={self._df.shape}")
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 6: Flatten
+    # ──────────────────────────────────────
+
+    def flatten(self, **kwargs) -> "Pipeline":
+        """Convert wide multi-level header table into tidy long format."""
+        from pynorma.preprocessor.flattener import flatten
+
+        if self._df is None:
+            return self
+
+        self._df = flatten(self._df, **kwargs)
+        self._log.append(f"Flatten: shape={self._df.shape}")
+
+        return self
+
+    # ──────────────────────────────────────
+    # Phase 7: Append
+    # ──────────────────────────────────────
+
+    def append_table(self, other: Union[pd.DataFrame, int] = 1) -> "Pipeline":
+        """Append another detected table or an external DataFrame.
+
+        Parameters
+        ----------
+        other : pd.DataFrame or int
+            If int, appends the Nth detected table (0-indexed).
+            If DataFrame, appends it directly.
+        """
+        from pynorma.preprocessor.appender import append
+
+        if self._df is None:
+            return self
+
+        if isinstance(other, int) and other < len(self._tables):
+            self._df = append(self._df, self._tables[other])
+            self._log.append(f"Append: merged table {other}")
+        elif isinstance(other, pd.DataFrame):
+            self._df = append(self._df, other)
+            self._log.append(f"Append: merged external DataFrame")
+
+        return self
+
+    # ──────────────────────────────────────
+    # Output
+    # ──────────────────────────────────────
+
+    def result(self, table_index: int = 0) -> pd.DataFrame:
+        """Return the processed DataFrame.
+
+        Parameters
+        ----------
+        table_index : int
+            Which table to return (when multiple detected).
+        """
+        if self._df is not None:
+            return self._df
+        if table_index < len(self._tables):
+            return self._tables[table_index]
+        raise ValueError("No processed table available. Call .detect().clean() first.")
+
+    def all_tables(self) -> list[pd.DataFrame]:
+        """Return all detected tables as a list of DataFrames."""
+        return self._tables
+
+    @property
+    def log(self) -> list[str]:
+        """Return processing log."""
+        return list(self._log)
+
+    def run(self) -> pd.DataFrame:
+        """Convenience: detect + clean in one call."""
+        return self.detect().clean().result()
+
+    def save(self, path: str, table_index: int = 0, **kwargs) -> None:
+        """Save result to file."""
+        from pynorma.io.writer import save_dataframe
+        save_dataframe(self.result(table_index), path, **kwargs)
+
+    def __repr__(self) -> str:
+        n = len(self._tables)
+        shape = self._df.shape if self._df is not None else "None"
+        return f"Pipeline(tables={n}, current_shape={shape})"
