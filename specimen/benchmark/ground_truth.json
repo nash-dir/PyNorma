@@ -1,0 +1,140 @@
+{
+  "_meta": {
+    "description": "Hand-labeled structural ground truth for all specimens. Unlike the auto-generated GT in benchmark_runner.py, every entry here was labeled by inspecting the file contents.",
+    "schema": {
+      "header_rows": "[first, last] inclusive row indices of the header block, or null for headerless tables",
+      "stub_end": "exclusive absolute column index where the stub (row-label/id columns) ends; stub_end == left means no stub",
+      "top": "first data row (inclusive), AFTER the header block",
+      "bottom": "last data row (inclusive); trailing summary rows excluded where possible (to_long also skips them by keyword)",
+      "left": "first column (inclusive)",
+      "right": "last column (exclusive)"
+    },
+    "labeling_principles": [
+      "stub = leading identifier/label columns, including numeric IDs and year columns when they clearly key the row (03, 08, 14, 17, cyclones, population_deaths, warehouse...)",
+      "units rows and spanning label rows adjacent to the header belong to the header block (02, 12, 17, 20, population_deaths, occupational_health)",
+      "title rows, footnotes, legends, and side annotation columns are excluded from the region (08 col 7, 19, occupational_health col 0)",
+      "interspersed subtotal/total rows are inside the row range where unavoidable; to_long/clean skip them via summary keywords (05, 15)"
+    ],
+    "labeled": "2026-07-05",
+    "revisions": {
+      "2026-07-05b": "occupational_health header block narrowed from rows 3-5 to 4-5: row 3's 'Sex and Age Group' is a spanning super-label whose omission yields cleaner tidy output (['Audiometric Test','Male','15-24',53]); matches the recursive-segmentation detector and keeps testbed manifest.json 4/4."
+    }
+  },
+  "files": {
+    "01_messy_sales.csv": [
+      {"header_rows": [0, 0], "stub_end": 2, "top": 1, "left": 0, "bottom": 223, "right": 8}
+    ],
+    "02_multiheader_report.csv": [
+      {"header_rows": [3, 4], "stub_end": 2, "top": 5, "left": 0, "bottom": 12, "right": 6}
+    ],
+    "03_encoding_chaos.csv": [
+      {"header_rows": [0, 0], "stub_end": 3, "top": 1, "left": 0, "bottom": 12, "right": 4}
+    ],
+    "04_ragged_columns.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 80, "right": 5}
+    ],
+    "05_merged_cells_mess.xlsx": [
+      {"header_rows": [3, 3], "stub_end": 2, "top": 4, "left": 0, "bottom": 13, "right": 6}
+    ],
+    "06_pivot_style_table.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 4, "right": 8}
+    ],
+    "07_semicolon_european.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 60, "right": 4}
+    ],
+    "08_annotated_stats_table.xlsx": [
+      {"header_rows": [3, 3], "stub_end": 1, "top": 4, "left": 0, "bottom": 13, "right": 7}
+    ],
+    "09_wide_sparse.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 40, "right": 50}
+    ],
+    "10_multiple_tables_one_sheet.xlsx": [
+      {"header_rows": [1, 1], "stub_end": 1, "top": 2, "left": 0, "bottom": 6, "right": 3},
+      {"header_rows": [8, 8], "stub_end": 1, "top": 9, "left": 0, "bottom": 20, "right": 4},
+      {"header_rows": [1, 1], "stub_end": 5, "top": 2, "left": 4, "bottom": 5, "right": 7}
+    ],
+    "11_no_header_numeric.csv": [
+      {"header_rows": null, "stub_end": 0, "top": 0, "left": 0, "bottom": 99, "right": 6}
+    ],
+    "12_deep_multiheader.csv": [
+      {"header_rows": [4, 5], "stub_end": 1, "top": 8, "left": 0, "bottom": 13, "right": 8}
+    ],
+    "13_pivot_crosstab.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 8, "right": 7}
+    ],
+    "14_three_tables_gapped.csv": [
+      {"header_rows": [0, 0], "stub_end": 3, "top": 1, "left": 0, "bottom": 10, "right": 4},
+      {"header_rows": [16, 16], "stub_end": 1, "top": 17, "left": 0, "bottom": 22, "right": 4},
+      {"header_rows": [31, 31], "stub_end": 1, "top": 32, "left": 0, "bottom": 36, "right": 5}
+    ],
+    "15_subtotals_interspersed.csv": [
+      {"header_rows": [0, 0], "stub_end": 2, "top": 1, "left": 0, "bottom": 14, "right": 7}
+    ],
+    "16_extreme_sparse.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 200, "right": 31}
+    ],
+    "17_crosstab_rowheaders.csv": [
+      {"header_rows": [0, 1], "stub_end": 2, "top": 2, "left": 0, "bottom": 11, "right": 7}
+    ],
+    "18_empty_cols_middle.csv": [
+      {"header_rows": [0, 0], "stub_end": 2, "top": 1, "left": 0, "bottom": 50, "right": 7}
+    ],
+    "19_title_footnotes_heavy.csv": [
+      {"header_rows": [5, 5], "stub_end": 1, "top": 6, "left": 0, "bottom": 12, "right": 7}
+    ],
+    "20_mixed_lang_units.csv": [
+      {"header_rows": [0, 1], "stub_end": 3, "top": 2, "left": 0, "bottom": 81, "right": 6}
+    ],
+    "21_extreme_ragged.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 60, "right": 8}
+    ],
+    "22_single_column.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 150, "right": 1}
+    ],
+    "diabetes_missing_data.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 768, "right": 9}
+    ],
+    "github_messy_data.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 165, "right": 7}
+    ],
+    "global_world_cities.csv": [
+      {"header_rows": [0, 0], "stub_end": 3, "top": 1, "left": 0, "bottom": 33356, "right": 4}
+    ],
+    "realworld_automobile.csv": [
+      {"header_rows": [0, 0], "stub_end": 0, "top": 1, "left": 0, "bottom": 205, "right": 26}
+    ],
+    "realworld_cyclones_philippines.xlsx": [
+      {"header_rows": [0, 0], "stub_end": 5, "top": 1, "left": 0, "bottom": 101, "right": 9}
+    ],
+    "realworld_datascience_jobs_uncleaned.csv": [
+      {"header_rows": [0, 0], "stub_end": 4, "top": 1, "left": 0, "bottom": 672, "right": 15}
+    ],
+    "realworld_healthcare_messy.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 1000, "right": 10}
+    ],
+    "realworld_hr_messy.csv": [
+      {"header_rows": [0, 0], "stub_end": 1, "top": 1, "left": 0, "bottom": 1000, "right": 10}
+    ],
+    "realworld_ihtm_survey_2025.xlsx": [
+      {"header_rows": [0, 0], "stub_end": 5, "top": 1, "left": 0, "bottom": 18, "right": 9}
+    ],
+    "realworld_imdb_messy.csv": [
+      {"header_rows": [0, 0], "stub_end": 2, "top": 1, "left": 0, "bottom": 101, "right": 12}
+    ],
+    "realworld_occupational_health.xlsx": [
+      {"header_rows": [4, 5], "stub_end": 2, "top": 6, "left": 1, "bottom": 19, "right": 14},
+      {"header_rows": [37, 38], "stub_end": 2, "top": 39, "left": 1, "bottom": 56, "right": 14},
+      {"header_rows": [70, 71], "stub_end": 2, "top": 72, "left": 1, "bottom": 90, "right": 14},
+      {"header_rows": [97, 98], "stub_end": 2, "top": 99, "left": 1, "bottom": 117, "right": 14}
+    ],
+    "realworld_population_deaths.xlsx": [
+      {"header_rows": [0, 1], "stub_end": 1, "top": 2, "left": 0, "bottom": 87, "right": 23}
+    ],
+    "realworld_vaccine_study.xlsx": [
+      {"header_rows": [0, 0], "stub_end": 3, "top": 1, "left": 0, "bottom": 294, "right": 28}
+    ],
+    "realworld_warehouse_messy.csv": [
+      {"header_rows": [0, 0], "stub_end": 5, "top": 1, "left": 0, "bottom": 1000, "right": 10}
+    ]
+  }
+}

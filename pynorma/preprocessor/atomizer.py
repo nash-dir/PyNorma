@@ -51,13 +51,16 @@ def detect_feature_delimiter(
         candidates = config.get_delimiters()
 
     total = len(series)
+    non_null = series.dropna().astype(str)
+    if total == 0 or non_null.empty:
+        return None
+
     best_delim = None
     max_score = 0
 
     for delim in candidates:
-        count = (
-            series.dropna()
-            .astype(str)
+        count = int(
+            non_null
             .apply(lambda x, d=delim: len(x.split(d)) > 1)
             .sum()
         )

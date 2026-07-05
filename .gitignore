@@ -60,8 +60,25 @@ ehthumbs.db
 # Project-specific
 # ═══════════════════════════════════════════
 
-# Specimen data (test data, not tracked)
-/specimen/
+# Specimen: the benchmark SOURCE (detection engine, strategies, ground truth,
+# tests, generators) IS tracked — PyNorma imports it at runtime. Only the raw
+# corpus data files and generated outputs are ignored. Rebuild data with the
+# specimen/_collect_*.py and _generate_*.py scripts.
+/specimen/**/*.csv
+/specimen/**/*.xlsx
+/specimen/**/*.xls
+/specimen/**/*.tsv
+/specimen/**/*.parquet
+/specimen/result/
+/specimen/**/result/
+/specimen/benchmark/eval_results.json
+/specimen/benchmark/results/
+
+# Testbed: raw benchmark data is NOT tracked — only the source is committed
+# (fetch.py, manifest.json, runner.py, docs). Rebuild data with:
+#     python testbed/fetch.py
+/testbed/data/
+/testbed/results/*.raw.json
 
 # Debug scripts
 /debug/

@@ -123,9 +123,12 @@ def trim_dataframe(
 
         if header_to_set is None:
             if ensemble_header is not None:
-                # Use header from ensemble detection (relative to trimmed area)
-                header_to_set = ensemble_header - top_offset
-                final_header_row_abs = ensemble_header
+                # The ensemble region's top is the first DATA row, so the
+                # header row is not inside df_trimmed — take it from the
+                # original frame directly.
+                if 0 <= ensemble_header < original_shape[0]:
+                    df_trimmed.columns = list(df.iloc[ensemble_header, left:right])
+                    final_header_row_abs = ensemble_header
             else:
                 # Auto-detect via legacy header_finder
                 last_comment_row = detect_header_end_row(df_trimmed)

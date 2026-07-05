@@ -42,9 +42,19 @@ def _import_detection():
     if specimen_benchmark.exists() and str(specimen_benchmark.parent) not in sys.path:
         sys.path.insert(0, str(specimen_benchmark.parent))
     try:
-        from benchmark.core import TableRegion, quality_score, clean_region, read_specimen
+        from benchmark import core as bcore
         from benchmark.preprocess import detect as ensemble_detect
-        return TableRegion, quality_score, clean_region, read_specimen, ensemble_detect
+        return {
+            "TableRegion": bcore.TableRegion,
+            "quality_score": bcore.quality_score,
+            "clean_region": bcore.clean_region,
+            "read_specimen": bcore.read_specimen,
+            "detect": ensemble_detect,
+            "build_table_model": bcore.build_table_model,
+            "clean_region_model": bcore.clean_region_model,
+            "to_long": bcore.to_long,
+            "model_to_region": bcore.model_to_region,
+        }
     except ImportError:
         return None
 
@@ -80,6 +90,7 @@ class Pipeline:
         self._df: Optional[pd.DataFrame] = None
         self._tables: list[pd.DataFrame] = []
         self._regions = []
+        self._models = []
         self._grid = None
         self._log: list[str] = []
 
@@ -108,17 +119,20 @@ class Pipeline:
                 self._tables = [self._df]
             return self
 
-        TableRegion, quality_score, clean_region, read_specimen, ensemble_detect = modules
-
         if isinstance(self._source, pd.DataFrame):
             # Convert DataFrame to grid for detection
             grid = [list(self._source.columns)] + self._source.values.tolist()
             grid = [[str(c) if c is not None else "" for c in row] for row in grid]
         else:
-            grid, _ = read_specimen(Path(self._source))
+            grid, _ = modules["read_specimen"](Path(self._source))
 
         self._grid = grid
-        self._regions = ensemble_detect(grid, strategy=self._strategy)
+        raw_regions = modules["detect"](grid, strategy=self._strategy)
+        self._models = [modules["build_table_model"](grid, r) for r in raw_regions]
+        # Report the structurally-refined regions (correct header row, data
+        # top/bottom, headerless detection) rather than the coarse ensemble
+        # output — the model is a strictly better structural estimate.
+        self._regions = [modules["model_to_region"](grid, m) for m in self._models]
 
         self._log.append(
             f"Detection: {len(self._regions)} table(s) found "
@@ -144,21 +158,26 @@ class Pipeline:
             self._log.append("Clean: using existing DataFrame (no regions)")
             return self
 
-        _, _, clean_region, _, _ = modules
-
         self._tables = []
         for i, region in enumerate(self._regions):
-            cleaned_rows = clean_region(self._grid, region)
+            if i < len(self._models):
+                model = self._models[i]
+                cleaned_rows = modules["clean_region_model"](self._grid, model)
+                desc = (f"header_rows={model.header_rows}, stub_end={model.stub_end}, "
+                        f"rows=[{model.top}..{model.bottom}], "
+                        f"cols=[{model.left}..{model.right})")
+            else:
+                cleaned_rows = modules["clean_region"](self._grid, region)
+                desc = (f"header={region.header}, "
+                        f"rows=[{region.top}..{region.bottom}], "
+                        f"cols=[{region.left}..{region.right})")
             if cleaned_rows and len(cleaned_rows) >= 2:
                 header = cleaned_rows[0]
                 data = cleaned_rows[1:]
                 df = pd.DataFrame(data, columns=header)
                 self._tables.append(df)
                 self._log.append(
-                    f"Clean: table {i} → {df.shape[0]} rows × {df.shape[1]} cols "
-                    f"(region: header={region.header}, "
-                    f"rows=[{region.top}..{region.bottom}], "
-                    f"cols=[{region.left}..{region.right}))"
+                    f"Clean: table {i} → {df.shape[0]} rows × {df.shape[1]} cols ({desc})"
                 )
 
         if self._tables:
@@ -258,11 +277,51 @@ class Pipeline:
         return self
 
     # ──────────────────────────────────────
-    # Phase 6: Flatten
+    # Phase 6: Long-form conversion
     # ──────────────────────────────────────
 
+    def to_long(
+        self,
+        table_index: int = 0,
+        *,
+        value_name: str = "value",
+        dropna: bool = True,
+        ffill_stub: bool = True,
+    ) -> "Pipeline":
+        """Convert a detected table into long form via its TableModel.
+
+        Deterministic melt driven by the detected structure (multi-row header
+        block + stub columns). Requires .detect() to have run; this is the
+        primary path for the project goal "any tabular data → long form".
+        """
+        modules = _import_detection()
+
+        if modules is None or not self._models or table_index >= len(self._models):
+            # No structural model available — fall back to legacy flattener
+            return self.flatten()
+
+        columns, rows = modules["to_long"](
+            self._grid,
+            self._models[table_index],
+            value_name=value_name,
+            dropna=dropna,
+            ffill_stub=ffill_stub,
+        )
+        self._df = pd.DataFrame(rows, columns=columns)
+        self._log.append(f"ToLong: table {table_index} → shape={self._df.shape}")
+
+        return self
+
     def flatten(self, **kwargs) -> "Pipeline":
-        """Convert wide multi-level header table into tidy long format."""
+        """Convert wide multi-level header table into tidy long format.
+
+        When a TableModel is available (after .detect()), delegates to
+        model-driven to_long(); the legacy DataFrame-based flattener runs
+        only when there is no detected structure to rely on.
+        """
+        if self._models and self._grid is not None:
+            return self.to_long()
+
         from pynorma.preprocessor.flattener import flatten
 
         if self._df is None:
@@ -327,9 +386,20 @@ class Pipeline:
         """Return processing log."""
         return list(self._log)
 
-    def run(self) -> pd.DataFrame:
-        """Convenience: detect + clean in one call."""
-        return self.detect().clean().result()
+    def run(self, shape: str = "wide") -> pd.DataFrame:
+        """Convenience: detect + clean (+ long-form conversion) in one call.
+
+        Parameters
+        ----------
+        shape : "wide" or "long"
+            "wide" (default) returns the cleaned table as-is.
+            "long" additionally melts it into long form via the detected
+            TableModel structure.
+        """
+        self.detect().clean()
+        if shape == "long":
+            self.to_long()
+        return self.result()
 
     def save(self, path: str, table_index: int = 0, **kwargs) -> None:
         """Save result to file."""

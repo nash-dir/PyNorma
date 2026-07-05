@@ -682,4 +682,8 @@ class TestPackageImports:
     def test_all_exports(self):
         import pynorma
         assert hasattr(pynorma, "__all__")
-        assert len(pynorma.__all__) == 8
+        assert set(pynorma.__all__) == {
+            "parse", "save_dataframe", "flatten",
+            "atomize_by_column", "atomize_by_row", "detect_multivalue_columns",
+            "clarify", "append", "merge", "Pipeline",
+        }

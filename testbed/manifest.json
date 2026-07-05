@@ -1,0 +1,2624 @@
+{
+  "schema_version": 1,
+  "title": "PyNorma Testbed — benchmark reference manifest",
+  "description": "Human-verified ground-truth labels for messy CSV/XLSX table-detection references. Raw data is NOT committed (see .gitignore); rebuild with: python testbed/fetch.py",
+  "labeling_spec": {
+    "indexing": "0-based",
+    "header": "row index of the column-name row; -1 if the table has no header",
+    "top": "first DATA row, inclusive",
+    "left": "first DATA column, inclusive",
+    "bottom": "last DATA row, inclusive (excludes trailing total/footnote/blank rows)",
+    "right": "last DATA column, EXCLUSIVE",
+    "multi_table": "one region per table; primary describes the first (top-left) table",
+    "primary.clean_cols": "expected cleaned column count (null if ragged/ambiguous)",
+    "primary.clean_rows": "approx expected cleaned data-row count (null if unsure); scored with tolerance"
+  },
+  "tag_vocabulary": [
+    "title_rows",
+    "multi_header",
+    "unit_row",
+    "legend_row",
+    "merged_cells",
+    "multi_table",
+    "side_by_side",
+    "row_headers",
+    "footnotes",
+    "side_annotation",
+    "subtotals",
+    "sparse",
+    "wide",
+    "giant_wide",
+    "pivot_crosstab",
+    "ragged",
+    "empty_cols",
+    "leading_blank_cols",
+    "blank_rows",
+    "no_header",
+    "single_column",
+    "missing_markers",
+    "mixed_types",
+    "european_decimal",
+    "semicolon",
+    "tsv",
+    "encoding_nonutf8",
+    "multilingual",
+    "one_nf_violation",
+    "multivalue_cells",
+    "duplicate_rows",
+    "ghost_dimension",
+    "embedded_newlines",
+    "formula_injection"
+  ],
+  "counts": {
+    "total": 55,
+    "synthetic": 22,
+    "real": 33,
+    "labeled": 55
+  },
+  "files": [
+    {
+      "name": "01_messy_sales",
+      "file": "synthetic/01_messy_sales.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 13979,
+      "sha256": "9689f95742d9630262ca65cb84f59e052cab0795d8d46c9c4e27d95de8f61a24",
+      "grid": {
+        "rows": 226,
+        "cols": 8
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types",
+        "subtotals",
+        "footnotes",
+        "duplicate_rows",
+        "blank_rows"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 223,
+            "right": 8
+          }
+        ],
+        "primary": {
+          "clean_cols": 8,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "02_multiheader_report",
+      "file": "synthetic/02_multiheader_report.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 539,
+      "sha256": "22eff5c417430d7938c8cc6a2cfe766a137b3fe8f0e3daa7c701a5cc19436eda",
+      "grid": {
+        "rows": 17,
+        "cols": 6
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "unit_row",
+        "multi_header",
+        "subtotals",
+        "footnotes",
+        "multilingual",
+        "missing_markers"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 3,
+            "top": 5,
+            "left": 0,
+            "bottom": 12,
+            "right": 6
+          }
+        ],
+        "primary": {
+          "clean_cols": 6,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "03_encoding_chaos",
+      "file": "synthetic/03_encoding_chaos.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 557,
+      "sha256": "02cbfd7140d895a5bec8540bfe08dde88000671f438cdeb1f46396067d45074a",
+      "grid": {
+        "rows": 13,
+        "cols": 4
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "multilingual",
+        "mixed_types",
+        "missing_markers",
+        "embedded_newlines",
+        "formula_injection"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 12,
+            "right": 4
+          }
+        ],
+        "primary": {
+          "clean_cols": 4,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "04_ragged_columns",
+      "file": "synthetic/04_ragged_columns.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1541,
+      "sha256": "3e7676a462a12733b189d9148fa729d4d72d4c5a1f2e075dfff9cce17cba41b4",
+      "grid": {
+        "rows": 81,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "ragged",
+        "missing_markers"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 80,
+            "right": 5
+          }
+        ],
+        "primary": {
+          "clean_cols": null,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "05_merged_cells_mess",
+      "file": "synthetic/05_merged_cells_mess.xlsx",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "매출_원본",
+      "bytes": 7818,
+      "sha256": "354431333bd009386687521d2a196265fcfb109bc6d511d37d0e31327ebae763",
+      "grid": {
+        "rows": 18,
+        "cols": 6
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "merged_cells",
+        "subtotals",
+        "footnotes",
+        "blank_rows",
+        "missing_markers",
+        "multi_sheet"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 3,
+            "top": 4,
+            "left": 0,
+            "bottom": 14,
+            "right": 6
+          }
+        ],
+        "primary": {
+          "clean_cols": 6,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "06_pivot_style_table",
+      "file": "synthetic/06_pivot_style_table.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 382,
+      "sha256": "36904313057c3bbdcbeb4443f5d0a478e68a1455ad2f63ec5e4ec08648623731",
+      "grid": {
+        "rows": 11,
+        "cols": 8
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "pivot_crosstab",
+        "wide",
+        "subtotals",
+        "footnotes",
+        "blank_rows"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 4,
+            "right": 8
+          }
+        ],
+        "primary": {
+          "clean_cols": 8,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "07_semicolon_european",
+      "file": "synthetic/07_semicolon_european.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ";",
+      "sheet": "",
+      "bytes": 1562,
+      "sha256": "f57b8dfe930b6f8c13902741e4fffb8067a1e6221267f0c757767c6f98d7dff8",
+      "grid": {
+        "rows": 61,
+        "cols": 4
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "semicolon",
+        "european_decimal",
+        "missing_markers",
+        "multilingual"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 60,
+            "right": 4
+          }
+        ],
+        "primary": {
+          "clean_cols": 4,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "08_annotated_stats_table",
+      "file": "synthetic/08_annotated_stats_table.xlsx",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "통계표",
+      "bytes": 5806,
+      "sha256": "df6457cc9f1c183bd185fafc281daedcdea2fd7b8862cef26a9b6d412f76e40d",
+      "grid": {
+        "rows": 18,
+        "cols": 8
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "unit_row",
+        "footnotes",
+        "side_annotation",
+        "missing_markers"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 3,
+            "top": 4,
+            "left": 0,
+            "bottom": 13,
+            "right": 8
+          }
+        ],
+        "primary": {
+          "clean_cols": 8,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "09_wide_sparse",
+      "file": "synthetic/09_wide_sparse.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 5891,
+      "sha256": "fd88ac031e173235a580bd1c2dc2cadc7bd8eaa388fbf9f11e6566106b3b4f24",
+      "grid": {
+        "rows": 41,
+        "cols": 50
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "wide",
+        "sparse",
+        "giant_wide"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 40,
+            "right": 50
+          }
+        ],
+        "primary": {
+          "clean_cols": 50,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "10_multiple_tables_one_sheet",
+      "file": "synthetic/10_multiple_tables_one_sheet.xlsx",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "혼합",
+      "bytes": 5691,
+      "sha256": "d4326dacbc4650eba9e4390b41a9d4e1e19f685ba344440200d619637aa76b03",
+      "grid": {
+        "rows": 21,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "multi_table",
+        "side_by_side",
+        "title_rows",
+        "missing_markers"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 3,
+        "regions": [
+          {
+            "header": 1,
+            "top": 2,
+            "left": 0,
+            "bottom": 6,
+            "right": 3
+          },
+          {
+            "header": 1,
+            "top": 2,
+            "left": 4,
+            "bottom": 5,
+            "right": 7
+          },
+          {
+            "header": 8,
+            "top": 9,
+            "left": 0,
+            "bottom": 20,
+            "right": 4
+          }
+        ],
+        "primary": {
+          "clean_cols": 3,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "11_no_header_numeric",
+      "file": "synthetic/11_no_header_numeric.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 3630,
+      "sha256": "814282230cdc6c8ad27c86904db65b6287d24de0186d694ac5ec2ac98725e3bb",
+      "grid": {
+        "rows": 100,
+        "cols": 6
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "no_header"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": -1,
+            "top": 0,
+            "left": 0,
+            "bottom": 99,
+            "right": 6
+          }
+        ],
+        "primary": {
+          "clean_cols": 6,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "12_deep_multiheader",
+      "file": "synthetic/12_deep_multiheader.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 647,
+      "sha256": "b59ccaa658acf541bd424d840df8614af43997e8cbcc9ad0898f6a42857074fb",
+      "grid": {
+        "rows": 18,
+        "cols": 8
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "title_rows",
+        "multi_header",
+        "unit_row",
+        "subtotals",
+        "footnotes",
+        "blank_rows"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 5,
+            "top": 8,
+            "left": 0,
+            "bottom": 13,
+            "right": 8
+          }
+        ],
+        "primary": {
+          "clean_cols": 8,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "13_pivot_crosstab",
+      "file": "synthetic/13_pivot_crosstab.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 309,
+      "sha256": "2e473233f3f00282450b9c5110b15ea40f23ebb351d6fc76fe387f58fca380a0",
+      "grid": {
+        "rows": 10,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "pivot_crosstab",
+        "subtotals",
+        "multilingual"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 8,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "14_three_tables_gapped",
+      "file": "synthetic/14_three_tables_gapped.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 797,
+      "sha256": "95ee0bec61a218b2b6dd96d56a4c38b848dd7c1e99c25b3c4647c5a32ac75a42",
+      "grid": {
+        "rows": 37,
+        "cols": 5
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "multi_table",
+        "blank_rows",
+        "footnotes"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 3,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 10,
+            "right": 4
+          },
+          {
+            "header": 16,
+            "top": 17,
+            "left": 0,
+            "bottom": 22,
+            "right": 4
+          },
+          {
+            "header": 31,
+            "top": 32,
+            "left": 0,
+            "bottom": 36,
+            "right": 5
+          }
+        ],
+        "primary": {
+          "clean_cols": 4,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "15_subtotals_interspersed",
+      "file": "synthetic/15_subtotals_interspersed.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 653,
+      "sha256": "dd01a1c6fdf70deca0a3407f00a7fdcbb296edcbae185dc04279d2d1d7e92d70",
+      "grid": {
+        "rows": 19,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "subtotals",
+        "leading_blank_cols",
+        "footnotes",
+        "unit_row"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 16,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "16_extreme_sparse",
+      "file": "synthetic/16_extreme_sparse.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 11287,
+      "sha256": "52fff936ebb5645e2b84748da22ce463c44a936af261e7a1cb43eb0df33319e8",
+      "grid": {
+        "rows": 201,
+        "cols": 31
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "sparse",
+        "wide",
+        "giant_wide"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 200,
+            "right": 31
+          }
+        ],
+        "primary": {
+          "clean_cols": 31,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "17_crosstab_rowheaders",
+      "file": "synthetic/17_crosstab_rowheaders.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 406,
+      "sha256": "8c9d0cb3a69c4df9348158add3326b0bf55f2031d11ce37b19fd7c714d72d977",
+      "grid": {
+        "rows": 12,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "multi_header",
+        "pivot_crosstab",
+        "row_headers",
+        "leading_blank_cols"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 1,
+            "top": 2,
+            "left": 0,
+            "bottom": 11,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "18_empty_cols_middle",
+      "file": "synthetic/18_empty_cols_middle.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1336,
+      "sha256": "2606344b7c39e6b46fce233bb0282fae8ef5c29f4e68ee0811ec926845800362",
+      "grid": {
+        "rows": 51,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "empty_cols",
+        "missing_markers"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 50,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "19_title_footnotes_heavy",
+      "file": "synthetic/19_title_footnotes_heavy.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 681,
+      "sha256": "e82b28257e51ffcf30b639cf806bd1c67c7a800111bee8ead94b47208f535816",
+      "grid": {
+        "rows": 19,
+        "cols": 7
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "footnotes",
+        "legend_row",
+        "multi_header"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 5,
+            "top": 6,
+            "left": 0,
+            "bottom": 12,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "20_mixed_lang_units",
+      "file": "synthetic/20_mixed_lang_units.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 3162,
+      "sha256": "bef4ed692466697b43f602b6773c7a52526c0c6296b55520371940176627c0dc",
+      "grid": {
+        "rows": 82,
+        "cols": 6
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "unit_row",
+        "multilingual",
+        "multi_header",
+        "mixed_types"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 2,
+            "left": 0,
+            "bottom": 81,
+            "right": 6
+          }
+        ],
+        "primary": {
+          "clean_cols": 6,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "21_extreme_ragged",
+      "file": "synthetic/21_extreme_ragged.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1071,
+      "sha256": "283c71f29c3faff25a6eff5e2167a56606a2035f77ce6a180a9a71b8803ff3ef",
+      "grid": {
+        "rows": 61,
+        "cols": 8
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "ragged"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 60,
+            "right": 8
+          }
+        ],
+        "primary": {
+          "clean_cols": null,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "22_single_column",
+      "file": "synthetic/22_single_column.csv",
+      "kind": "synthetic",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1266,
+      "sha256": "564b596e6769059612aeb36dfe17476519c94b6459757b1dac8df92ad936cd7f",
+      "grid": {
+        "rows": 151,
+        "cols": 1
+      },
+      "source": {
+        "url": null,
+        "provider": "PyNorma synthetic generator",
+        "license": "MIT (this repo)",
+        "generator": "specimen/_collect_specimens.py or specimen/_generate_adversarial.py"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "single_column",
+        "no_multivalue"
+      ],
+      "notes": "Synthetic adversarial specimen (deterministic, seed=42).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 150,
+            "right": 1
+          }
+        ],
+        "primary": {
+          "clean_cols": 1,
+          "clean_rows": null
+        }
+      }
+    },
+    {
+      "name": "bls_cps_occupation_by_industry_2015",
+      "file": "real/bls_cps_occupation_by_industry_2015.xlsx",
+      "kind": "real",
+      "origin": "download",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "cpsaat17",
+      "bytes": 20472,
+      "sha256": "969e4313bee7e1a00c8b0f4a96d545a7e803ce86b97b6e34ccfcfb76f36d30d2",
+      "grid": {
+        "rows": 134,
+        "cols": 13
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/428166c724b884f0a9afcc87c4552a0ad2726c2d/data/2021/2021-02-23/bls-2015.xlsx",
+        "provider": "U.S. Bureau of Labor Statistics, CPS annual averages table cpsaat17 (employed persons by occupation, industry, sex, race), via rfordatascience/tidytuesday (2021-02-23)",
+        "license": "US Government public domain (U.S. Bureau of Labor Statistics work); mirror repo rfordatascience/tidytuesday"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "unit_row",
+        "multi_header",
+        "merged_cells",
+        "row_headers",
+        "subtotals",
+        "footnotes",
+        "blank_rows",
+        "ghost_dimension"
+      ],
+      "notes": "BLS CPS table: 3-row merged header (r3 stub label + r4 top occupation groups + r5 leaf columns), title r0, unit row r1 ([In thousands]), NOTE footnote r133. Single table r7-131 with six embedded demographic panels (TOTAL/Men/Women/White/Black/Asian = ghost dimension) as interior group-header rows, interior blank separators, and hierarchical subtotal rows (Manufacturing=Durable+Nondurable). Col0 is industry row-header.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 5,
+            "top": 7,
+            "left": 0,
+            "bottom": 131,
+            "right": 13
+          }
+        ],
+        "primary": {
+          "clean_cols": 13,
+          "clean_rows": 114
+        }
+      }
+    },
+    {
+      "name": "census_h1_income_limits",
+      "file": "real/census_h1_income_limits.xlsx",
+      "kind": "real",
+      "origin": "download",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "h01a",
+      "bytes": 11428,
+      "sha256": "ed3e38d9c9de3779009f663f7a0ae9f0604066b69a33f5a50f494eb58e2c0064",
+      "grid": {
+        "rows": 99,
+        "cols": 7
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/714c6d44b6c56715eb8f94f82b24d02dade7e113/data/2021/2021-02-09/h01a.xlsx",
+        "provider": "U.S. Census Bureau, Historical Income Tables: Households, Table H-1 (Asian alone-or-in-combination), redistributed via rfordatascience/tidytuesday (2021-02-09)",
+        "license": "US Government public domain (U.S. Census Bureau work); mirror repo rfordatascience/tidytuesday"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "multi_header",
+        "multi_table",
+        "merged_cells",
+        "row_headers",
+        "footnotes"
+      ],
+      "notes": "Census Table H-1 income limits: FOUR stacked sub-tables (Current$/Asian-alone-or-combo, Current$/Asian-alone, 2019$/Asian-alone-or-combo, 2019$/Asian-alone), each with a repeated 2-row merged header (Year, Number, 'Upper limit of each fifth' spanning Lowest/Second/Third/Fourth, Lower limit of top 5 percent). Separated by title/section rows, not blank gaps. Trailing Source/Footnotes rows r97-98. Year cells carry footnote markers like '2017 (40)'.",
+      "ground_truth": {
+        "n_tables": 4,
+        "regions": [
+          {
+            "header": 6,
+            "top": 7,
+            "left": 0,
+            "bottom": 26,
+            "right": 7
+          },
+          {
+            "header": 29,
+            "top": 30,
+            "left": 0,
+            "bottom": 49,
+            "right": 7
+          },
+          {
+            "header": 53,
+            "top": 54,
+            "left": 0,
+            "bottom": 73,
+            "right": 7
+          },
+          {
+            "header": 76,
+            "top": 77,
+            "left": 0,
+            "bottom": 96,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": 20
+        }
+      }
+    },
+    {
+      "name": "dat8_chipotle_orders",
+      "file": "real/dat8_chipotle_orders.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "tsv",
+      "encoding": "utf-8-sig",
+      "delimiter": "\t",
+      "sheet": "",
+      "bytes": 374221,
+      "sha256": "203d1dddb6fc3a2fa7e10d5cb034689376b3e1d0566b35ccf166a9740a3ecc29",
+      "grid": {
+        "rows": 4623,
+        "cols": 5
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/justmarkham/DAT8/7dda003ffa795664e603868d6077e00974d61d0d/data/chipotle.tsv",
+        "provider": "justmarkham/DAT8 (General Assembly Data Science teaching repo); data originally from the TidyText/Chipotle order dataset",
+        "license": "unknown (public teaching repo, no explicit LICENSE file)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "tsv",
+        "missing_markers",
+        "mixed_types",
+        "one_nf_violation",
+        "multivalue_cells"
+      ],
+      "notes": "Tab-delimited despite .csv extension (utf-8-sig BOM). Clean header at row 0, single full-grid table. Cell-level messiness: 'NULL' missing markers in choice_description, $-prefixed currency strings in item_price, and bracketed multi-value ingredient lists in choice_description (1NF violation).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 4622,
+            "right": 5
+          }
+        ],
+        "primary": {
+          "clean_cols": 5,
+          "clean_rows": 4622
+        },
+        "multivalue_columns": [
+          "choice_description"
+        ]
+      }
+    },
+    {
+      "name": "diabetes_missing_data",
+      "file": "real/diabetes_missing_data.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 23981,
+      "sha256": "8cbbb9ee0846286c30b35211c4c12c4411d787024c14b0264649c4a85d3bded1",
+      "grid": {
+        "rows": 769,
+        "cols": 9
+      },
+      "source": {
+        "url": "https://github.com/YBI-Foundation/Dataset (Diabetes Missing Data.csv)",
+        "provider": "YBI-Foundation/Dataset",
+        "license": "see YBI-Foundation/Dataset repo"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "missing_markers"
+      ],
+      "notes": "Pima-style diabetes dataset: clean header at row 0, single rectangular 9-col table. Only messiness is empty cells for missing values (Serum_Insulin, Skin_Fold, Diastolic_BP, BMI). Region is the whole grid; first/last cols always filled so bounds are unambiguous.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 768,
+            "right": 9
+          }
+        ],
+        "primary": {
+          "clean_cols": 9,
+          "clean_rows": 768
+        }
+      }
+    },
+    {
+      "name": "github_messy_data",
+      "file": "real/github_messy_data.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 4156,
+      "sha256": "2a91bfa1a7952ec8877189189ee12d7a560f90e743aa41ab70093c5bc7a09b90",
+      "grid": {
+        "rows": 166,
+        "cols": 7
+      },
+      "source": {
+        "url": "https://github.com/ryanleeallred/datasets (messy-data.csv)",
+        "provider": "ryanleeallred/datasets",
+        "license": "unknown"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Clean header at row 0 (alpha..eta), single full-grid 7-col table. Messiness: some empty zeta/epsilon cells (missing), and negative numbers stored as text with a leading apostrophe (e.g. '-2, '-45) in beta/delta -> mixed types.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 165,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": 165
+        }
+      }
+    },
+    {
+      "name": "global_world_cities",
+      "file": "real/global_world_cities.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1367446,
+      "sha256": "050694714aa15ca25f1afc674e30aaded327a3128ad0b795af73956572a9d1cd",
+      "grid": {
+        "rows": 33357,
+        "cols": 4
+      },
+      "source": {
+        "url": "https://github.com/datasets/world-cities (data/world-cities.csv)",
+        "provider": "datasets/world-cities (Core Datasets)",
+        "license": "ODC-PDDL / see repo"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "multilingual"
+      ],
+      "notes": "Clean single tidy table, header at row 0 (name,country,subcountry,geonameid); only quirk is UTF-8 BOM and many non-ASCII/multilingual city names.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 33356,
+            "right": 4
+          }
+        ],
+        "primary": {
+          "clean_rows": 33356,
+          "clean_cols": 4
+        }
+      }
+    },
+    {
+      "name": "goodbooks_books",
+      "file": "real/goodbooks_books.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 3306692,
+      "sha256": "e50607a00c4dd4e35ca56a1c2a6acb3f371f868bb786144efaf4f5e4a15971d9",
+      "grid": {
+        "rows": 10001,
+        "cols": 23
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/fdb21c94e9e6e3340966a231c5bda91466e61ed6/books.csv",
+        "provider": "goodbooks-10k (zygmuntz/goodbooks-10k)",
+        "license": "See goodbooks-10k repository LICENSE (permissive, MIT-style)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "wide",
+        "multivalue_cells",
+        "one_nf_violation",
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Clean header at row 0, single wide 23-col table; authors cell packs multiple comma-separated authors (1NF violation), some blank language_code cells.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 10000,
+            "right": 23
+          }
+        ],
+        "primary": {
+          "clean_rows": 10000,
+          "clean_cols": 23
+        },
+        "multivalue_columns": [
+          "authors"
+        ]
+      }
+    },
+    {
+      "name": "movielens_movies",
+      "file": "real/movielens_movies.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1424822,
+      "sha256": "2626be326f56e507a518f76081bfb12c38b09d4cf35f1943ccb33fc655a5733f",
+      "grid": {
+        "rows": 27279,
+        "cols": 3
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/nchah/movielens-recommender/4c1a69e092bca937f8ef029f4747e8a247678253/data/ml-movies.csv",
+        "provider": "GroupLens MovieLens (ml-latest) via github mirror nchah/movielens-recommender",
+        "license": "MovieLens/GroupLens research-use terms (original data); mirror repo carries no separate LICENSE"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "multivalue_cells",
+        "one_nf_violation",
+        "missing_markers"
+      ],
+      "notes": "Clean header at row 0 (movieId,title,genres); genres is pipe-delimited multivalue (1NF violation) and '(no genres listed)' is a missing marker.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 27278,
+            "right": 3
+          }
+        ],
+        "primary": {
+          "clean_rows": 27278,
+          "clean_cols": 3
+        },
+        "multivalue_columns": [
+          "genres"
+        ]
+      }
+    },
+    {
+      "name": "nces_educational_attainment_104_10",
+      "file": "real/nces_educational_attainment_104_10.xlsx",
+      "kind": "real",
+      "origin": "download",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": " HS completion or higher",
+      "bytes": 53341,
+      "sha256": "cf154db58c4642847916b81b25a09eff47f47fcf97c0a0e7189e4741c38b1d6c",
+      "grid": {
+        "rows": 49,
+        "cols": 19
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/184779aada0363db28cdeff6c47a3655b40879d9/data/2021/2021-02-02/104.10.xlsx",
+        "provider": "U.S. National Center for Education Statistics (NCES), Digest of Education Statistics table 104.10 (educational attainment by race/ethnicity and sex), via rfordatascience/tidytuesday (2021-02-02)",
+        "license": "US Government public domain (NCES / U.S. Dept. of Education work); mirror repo rfordatascience/tidytuesday"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "blank_rows",
+        "missing_markers",
+        "mixed_types",
+        "wide"
+      ],
+      "notes": "Single header at row 0 (col0 mislabeled 'Total' but holds Year with embedded footnote superscripts e.g. '19103'=1910); 7 interior decade-separator blank rows kept inside; pervasive '—','(†)','(—)' missing markers, interleaved Standard-Error columns.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 48,
+            "right": 19
+          }
+        ],
+        "primary": {
+          "clean_rows": 41,
+          "clean_cols": 19
+        }
+      }
+    },
+    {
+      "name": "nea_artists_in_workforce_table1a",
+      "file": "real/nea_artists_in_workforce_table1a.xlsx",
+      "kind": "real",
+      "origin": "download",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "NationalArtists",
+      "bytes": 16230,
+      "sha256": "0cc6c7b8bacec4befbd9192b3bcb646d6b3a463469d143ade168959b3c288e48",
+      "grid": {
+        "rows": 43,
+        "cols": 14
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/f55f1f30735a689efa3de1877b9d641d934eaf0f/data/2022/2022-09-27/ADP-31-artists-in-the-workforce-NationalTablesv2/Table1aArtistProfile.xlsx",
+        "provider": "U.S. National Endowment for the Arts, 'Artists in the Workforce' National Tables, Table 1a Artist Profile, via rfordatascience/tidytuesday (2022-09-27)",
+        "license": "US Government public domain (National Endowment for the Arts work); mirror repo rfordatascience/tidytuesday"
+      },
+      "difficulty": "hard",
+      "messiness_tags": [
+        "title_rows",
+        "blank_rows",
+        "row_headers",
+        "pivot_crosstab",
+        "footnotes",
+        "missing_markers",
+        "sparse"
+      ],
+      "notes": "Crosstab: title 'Table 1a...' at row 0, blank row 1, leaf header at row 2 (col0 empty label column). Metrics run down col0 as row headers, occupations across; interior blank spacer rows between every metric are kept. Data ends at r28 'In sample'; rows 30-42 are footnotes/source (excluded). '*' = not-estimated missing marker.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 2,
+            "top": 3,
+            "left": 0,
+            "bottom": 28,
+            "right": 14
+          }
+        ],
+        "primary": {
+          "clean_rows": 16,
+          "clean_cols": 14
+        }
+      }
+    },
+    {
+      "name": "netflix_titles",
+      "file": "real/netflix_titles.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 3008283,
+      "sha256": "e08a4080af71c20f588c24e136482bf4aca14a7e9def3efb02b42a0d0d02504f",
+      "grid": {
+        "rows": 7788,
+        "cols": 12
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/f55f1f30735a689efa3de1877b9d641d934eaf0f/data/2021/2021-04-20/netflix_titles.csv",
+        "provider": "Netflix Movies and TV Shows (Kaggle, Shivam Bansal) redistributed via rfordatascience/tidytuesday 2021-04-20",
+        "license": "CC0 1.0 (Kaggle source); TidyTuesday redistributes as-is"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "one_nf_violation",
+        "multivalue_cells",
+        "multilingual"
+      ],
+      "notes": "Clean single table, header row 0, 12 cols; cast/country/listed_in pack multiple values per cell (1NF violation), scattered empty director/cast, accented multilingual names.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 7787,
+            "right": 12
+          }
+        ],
+        "primary": {
+          "clean_cols": 12,
+          "clean_rows": 7787
+        },
+        "multivalue_columns": [
+          "cast",
+          "country",
+          "listed_in"
+        ]
+      }
+    },
+    {
+      "name": "realworld_automobile",
+      "file": "real/realworld_automobile.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 26362,
+      "sha256": "156fca3298ebb4c1535b0a595821fce5050e3137c9e6ecaf5465f372a7766d31",
+      "grid": {
+        "rows": 206,
+        "cols": 26
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (automobile_dataset.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "wide",
+        "mixed_types"
+      ],
+      "notes": "Clean single wide table, header row 0, 26 cols, 205 data rows; a few empty cells (e.g. missing price at r10).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 205,
+            "right": 26
+          }
+        ],
+        "primary": {
+          "clean_cols": 26,
+          "clean_rows": 205
+        }
+      }
+    },
+    {
+      "name": "realworld_cyclones_philippines",
+      "file": "real/realworld_cyclones_philippines.xlsx",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "Sheet 1",
+      "bytes": 18706,
+      "sha256": "62b61a51a2e0dfc1dd38b6803af99279c775d13bb875fad263a7c8901042833a",
+      "grid": {
+        "rows": 102,
+        "cols": 9
+      },
+      "source": {
+        "url": "https://github.com/OxfordIHTM/messy-data (data/cyclones.xlsx)",
+        "provider": "OxfordIHTM/messy-data",
+        "license": "see OxfordIHTM/messy-data repo"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "missing_markers"
+      ],
+      "notes": "Clean single table on sheet 'Sheet 1', header row 0, 9 cols, 101 data rows; only noise is empty rsmc_name for unnamed depressions.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 101,
+            "right": 9
+          }
+        ],
+        "primary": {
+          "clean_cols": 9,
+          "clean_rows": 101
+        }
+      }
+    },
+    {
+      "name": "realworld_datascience_jobs_uncleaned",
+      "file": "real/realworld_datascience_jobs_uncleaned.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 2529235,
+      "sha256": "f0197b7af5b8589dae7a9065ed709f9ed15ce886405f731e051e2311d89be1f4",
+      "grid": {
+        "rows": 673,
+        "cols": 15
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (Uncleaned_DS_jobs.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types",
+        "wide"
+      ],
+      "notes": "Clean single table, header row 0, 15 cols, 672 data rows; noise is embedded newlines in Company Name/Job Description, rating appended into company-name cells, and '-1 used as a missing marker.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 672,
+            "right": 15
+          }
+        ],
+        "primary": {
+          "clean_cols": 15,
+          "clean_rows": 672
+        }
+      }
+    },
+    {
+      "name": "realworld_healthcare_messy",
+      "file": "real/realworld_healthcare_messy.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 89827,
+      "sha256": "0996592aac8dc338942296e3fc7983b8ba74711e17d0d8118d85ef6d535f1b51",
+      "grid": {
+        "rows": 1001,
+        "cols": 10
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (healthcare_messy_data.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types",
+        "duplicate_rows"
+      ],
+      "notes": "Clean single table, header row 0, 10 cols, 1000 data rows; heavy noise: nan/NaN/blank missing markers, mixed-type age ('forty'), inconsistent date formats, whitespace-padded repeated names.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 1000,
+            "right": 10
+          }
+        ],
+        "primary": {
+          "clean_cols": 10,
+          "clean_rows": 1000
+        }
+      }
+    },
+    {
+      "name": "realworld_hr_messy",
+      "file": "real/realworld_hr_messy.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 75606,
+      "sha256": "5f25e557586ec3d65d61830f17762b19fd3d6f109396463076ca6cc982a09729",
+      "grid": {
+        "rows": 1001,
+        "cols": 10
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (messy_HR_data.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Clean header row 0, single table of 1000 rows; noise is cell-level (nan/NAN/blank markers, 'thirty'/'SIXTY THOUSAND' in numeric Age/Salary, mixed date formats).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 1000,
+            "right": 10
+          }
+        ],
+        "primary": {
+          "clean_rows": 1000,
+          "clean_cols": 10
+        }
+      }
+    },
+    {
+      "name": "realworld_ihtm_survey_2025",
+      "file": "real/realworld_ihtm_survey_2025.xlsx",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "Sheet1",
+      "bytes": 9864,
+      "sha256": "3186e00fb28b88754d00c9aed293ba884a9a18e741222fe34eea236f58528642",
+      "grid": {
+        "rows": 19,
+        "cols": 9
+      },
+      "source": {
+        "url": "https://github.com/OxfordIHTM/messy-data (data/ihtm_2025.xlsx)",
+        "provider": "OxfordIHTM/messy-data",
+        "license": "see OxfordIHTM/messy-data repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types",
+        "blank_rows",
+        "sparse"
+      ],
+      "notes": "Header row 0, only 8 real responses (rows 1-8); trailing rows 9-18 carry only the id column (empty otherwise) and are excluded; one missing id, 'one' as text in number_siblings.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 8,
+            "right": 9
+          }
+        ],
+        "primary": {
+          "clean_rows": 8,
+          "clean_cols": 9
+        }
+      }
+    },
+    {
+      "name": "realworld_imdb_messy",
+      "file": "real/realworld_imdb_messy.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ";",
+      "sheet": "",
+      "bytes": 11574,
+      "sha256": "2638f8d2ff1e6fa82307874aca2843b5ff85d29fe91bae16df541c74bfc4c983",
+      "grid": {
+        "rows": 102,
+        "cols": 12
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (messy_IMDB_dataset.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "semicolon",
+        "empty_cols",
+        "blank_rows",
+        "missing_markers",
+        "mixed_types",
+        "encoding_nonutf8",
+        "european_decimal",
+        "multivalue_cells",
+        "one_nf_violation"
+      ],
+      "notes": "Header row 0, semicolon-delimited; interior fully-empty ghost column at index 8 (blank header between Director and Income) and one interior blank row at r14 stay inside frame; garbled header bytes (Original titl�, Genr�), messy decimals/thousands, comma-packed Genre column. [GT fix: 12 cols incl. one empty-header column; Genre header is mojibake.]",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 101,
+            "right": 12
+          }
+        ],
+        "primary": {
+          "clean_rows": 100,
+          "clean_cols": 12
+        },
+        "multivalue_columns": [
+          "Genr�"
+        ]
+      }
+    },
+    {
+      "name": "realworld_occupational_health",
+      "file": "real/realworld_occupational_health.xlsx",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "Q1 Q2 Q3 Q4",
+      "bytes": 55179,
+      "sha256": "a89f766b903d0ff8d46d628736699837765ef6b0e37e3ea6c8b9fe034fb3b6cd",
+      "grid": {
+        "rows": 1048576,
+        "cols": 14
+      },
+      "source": {
+        "url": "https://github.com/OxfordIHTM/messy-data (data/occupational_health.xlsx)",
+        "provider": "OxfordIHTM/messy-data",
+        "license": "see OxfordIHTM/messy-data repo"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "title_rows",
+        "multi_header",
+        "multi_table",
+        "pivot_crosstab",
+        "subtotals",
+        "ghost_dimension",
+        "merged_cells",
+        "blank_rows",
+        "leading_blank_cols"
+      ],
+      "notes": "Four stacked quarterly crosstabs (Q1-Q4) each with title+subtitle rows, a 3-row Sex/Age multi-header (leaf = age-bracket row), empty leading col 0, and a trailing Grand Total row excluded; openpyxl reports 1048576 ghost rows.",
+      "ground_truth": {
+        "n_tables": 4,
+        "regions": [
+          {
+            "header": 5,
+            "top": 6,
+            "left": 1,
+            "bottom": 19,
+            "right": 14
+          },
+          {
+            "header": 38,
+            "top": 39,
+            "left": 1,
+            "bottom": 56,
+            "right": 14
+          },
+          {
+            "header": 71,
+            "top": 72,
+            "left": 1,
+            "bottom": 90,
+            "right": 14
+          },
+          {
+            "header": 98,
+            "top": 99,
+            "left": 1,
+            "bottom": 117,
+            "right": 14
+          }
+        ],
+        "primary": {
+          "clean_rows": 14,
+          "clean_cols": 13
+        }
+      }
+    },
+    {
+      "name": "realworld_population_deaths",
+      "file": "real/realworld_population_deaths.xlsx",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "2011-21_M",
+      "bytes": 24441,
+      "sha256": "4dc5dfd6f15dc7fe89a6ce0098e0cc1a62c3022eb76a7043c3e0a2027238c93f",
+      "grid": {
+        "rows": 88,
+        "cols": 23
+      },
+      "source": {
+        "url": "https://github.com/OxfordIHTM/messy-data (data/pop_death.xlsx)",
+        "provider": "OxfordIHTM/messy-data",
+        "license": "see OxfordIHTM/messy-data repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "title_rows",
+        "wide",
+        "merged_cells",
+        "missing_markers"
+      ],
+      "notes": "Merged '2011-2021 / Males' title in row 0 pushes the real header to row 1; wide 23-col table (Age + 11 years x Pop/Deaths), Age 0-85 in rows 2-87, one blank death value at r41; no trailing total.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 1,
+            "top": 2,
+            "left": 0,
+            "bottom": 87,
+            "right": 23
+          }
+        ],
+        "primary": {
+          "clean_rows": 86,
+          "clean_cols": 23
+        }
+      }
+    },
+    {
+      "name": "realworld_vaccine_study",
+      "file": "real/realworld_vaccine_study.xlsx",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "Sheet1",
+      "bytes": 47659,
+      "sha256": "ee9c9693686edc72af1b2dd68d25d6d7eacb84e6436cd7a6d8d3838848f4ebf7",
+      "grid": {
+        "rows": 301,
+        "cols": 1024
+      },
+      "source": {
+        "url": "https://github.com/OxfordIHTM/messy-data (data/vaccine.xlsx)",
+        "provider": "OxfordIHTM/messy-data",
+        "license": "see OxfordIHTM/messy-data repo"
+      },
+      "difficulty": "adversarial",
+      "messiness_tags": [
+        "ghost_dimension",
+        "empty_cols",
+        "blank_rows",
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Ghost dimension: openpyxl reports 1024 cols but real data is cols 0-27 (28 cols); header row 0 names cols 0-28 but the trailing 'TruncatedTiter' (c28) has a header and zero data so it is trimmed as outer frame. Data rows 1-294, rows 295-300 are fully blank. Missing/censored markers throughout (#N/A, NA, *****, >120, ?, *).",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 294,
+            "right": 28
+          }
+        ],
+        "primary": {
+          "clean_cols": 28,
+          "clean_rows": 294
+        }
+      }
+    },
+    {
+      "name": "realworld_warehouse_messy",
+      "file": "real/realworld_warehouse_messy.csv",
+      "kind": "real",
+      "origin": "specimen",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 88961,
+      "sha256": "2dde1e9e9a55d761fd2b70008aa4339b97da87542457e493fdb2301323bf148d",
+      "grid": {
+        "rows": 1001,
+        "cols": 10
+      },
+      "source": {
+        "url": "https://github.com/eyowhite/Messy-dataset (warehouse_messy_data.csv)",
+        "provider": "eyowhite/Messy-dataset",
+        "license": "see eyowhite/Messy-dataset repo"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Single 10-col inventory table, header row 0, 1000 data rows; dirty cell values: Quantity mixes numbers with spelled-out 'two hundred', NaN missing markers, whitespace-padded product names, DD/MM/YYYY dates.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 1000,
+            "right": 10
+          }
+        ],
+        "primary": {
+          "clean_cols": 10,
+          "clean_rows": 1000
+        }
+      }
+    },
+    {
+      "name": "seaborn_penguins",
+      "file": "real/seaborn_penguins.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 14168,
+      "sha256": "018902c9991c65a3f45138ce1e1f5bd359826bf01b5cfc9f178f3536dee142ef",
+      "grid": {
+        "rows": 345,
+        "cols": 7
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/mwaskom/seaborn-data/4e06bf0b8c4bf161ed04e9df59b77c35fd2ec44a/penguins.csv",
+        "provider": "seaborn-data (mwaskom/seaborn-data GitHub mirror; Palmer Penguins, Gorman/Horst)",
+        "license": "CC0 1.0 (Palmer Penguins)"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "missing_markers"
+      ],
+      "notes": "Textbook clean single table: header at row 0 (species,island,bill_length_mm,...,sex), 344 data rows; interior rows with blank measurements/sex are missing values that stay inside the region.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 344,
+            "right": 7
+          }
+        ],
+        "primary": {
+          "clean_cols": 7,
+          "clean_rows": 344
+        }
+      }
+    },
+    {
+      "name": "seaborn_titanic",
+      "file": "real/seaborn_titanic.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 58802,
+      "sha256": "48ebe107225cc2a86340337d1b2b9c4fe15b2b12eb34cecd75069f5544a64213",
+      "grid": {
+        "rows": 892,
+        "cols": 15
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/mwaskom/seaborn-data/a29a0141d20e156043ec257a64c8de3b3a03fd6e/titanic.csv",
+        "provider": "seaborn-data (mwaskom/seaborn-data GitHub mirror)",
+        "license": "BSD-3-Clause (seaborn-data mirror)"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Clean single table, header row 0, 891 data rows across 15 cols; blank age and deck cells are interior missing values, and columns mix bool/string/numeric types.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 891,
+            "right": 15
+          }
+        ],
+        "primary": {
+          "clean_cols": 15,
+          "clean_rows": 891
+        }
+      }
+    },
+    {
+      "name": "tidy_billboard_wide",
+      "file": "real/tidy_billboard_wide.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 92675,
+      "sha256": "85c6b2858d9e87042cb3c01c26c6b6b0ae4f5e31b919812dba9ba5b3c05b7961",
+      "grid": {
+        "rows": 318,
+        "cols": 83
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/hadley/tidy-data/25dd834ba47b098d3894481078137b5962c2f942/data/billboard.csv",
+        "provider": "hadley/tidy-data data/billboard.csv (Wickham 2014 'Tidy Data' supplement)",
+        "license": "Unspecified (research-paper supplement repo; academic use)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "wide",
+        "missing_markers"
+      ],
+      "notes": "Wide pivoted chart data: 7 metadata cols plus x1st.week..x76th.week (83 total), header row 0, 317 data rows; NA marks weeks a track was not on the chart.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 317,
+            "right": 83
+          }
+        ],
+        "primary": {
+          "clean_cols": 83,
+          "clean_rows": 317
+        }
+      }
+    },
+    {
+      "name": "tidy_relig_income_pew",
+      "file": "real/tidy_relig_income_pew.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 945,
+      "sha256": "7cbde4b24bb300c2cab21f70da3dcc821dcbd175cdca6102e44b4b4edf721237",
+      "grid": {
+        "rows": 19,
+        "cols": 11
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/tidyverse/tidyr/11572d8c5588e46865efc26b0de6f4b4f0a23815/data-raw/relig_income.csv",
+        "provider": "tidyverse/tidyr data-raw (relig_income); orig. Pew Forum via Wickham 2014, J. Stat. Soft. 59(10) 'Tidy Data'",
+        "license": "MIT (tidyverse/tidyr package)"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "pivot_crosstab",
+        "row_headers"
+      ],
+      "notes": "Pew religion x income crosstab; clean header at row0 (religion + 10 income-bracket cols), 18 religion rows fully populated, row5 'Don't know/refus' is an interior category kept in-region.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 18,
+            "right": 11
+          }
+        ],
+        "primary": {
+          "clean_cols": 11,
+          "clean_rows": 18
+        }
+      }
+    },
+    {
+      "name": "tidy_table4a_pivot",
+      "file": "real/tidy_table4a_pivot.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 86,
+      "sha256": "45c55e7ffd5a0e5cdae44062231d5c22075a52acd3d3e4e7dd10d0dbf2ed3e8c",
+      "grid": {
+        "rows": 4,
+        "cols": 3
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/tidyverse/tidyr/4fb915d7143c28bcaee6ed7e2b8628c33ba2b069/data-raw/table4a.csv",
+        "provider": "tidyverse/tidyr data-raw/table4a.csv (Wickham & Grolemund, R4DS; WHO TB cases)",
+        "license": "MIT (tidyverse/tidyr package)"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "pivot_crosstab",
+        "row_headers"
+      ],
+      "notes": "Tiny tidyr table4a: country x year(1999,2000) pivot; header row0, 3 data rows, no noise.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 3,
+            "right": 3
+          }
+        ],
+        "primary": {
+          "clean_cols": 3,
+          "clean_rows": 3
+        }
+      }
+    },
+    {
+      "name": "tidy_us_rent_income",
+      "file": "real/tidy_us_rent_income.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 3034,
+      "sha256": "a1ceda3d60c33b70de0c9c09e64e04acf7ba836788f2b1ab20a81f456027f075",
+      "grid": {
+        "rows": 105,
+        "cols": 5
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/tidyverse/tidyr/36502c811832319821d40aafed56d58d1549166a/data-raw/us_rent_income.csv",
+        "provider": "tidyverse/tidyr data-raw/us_rent_income.csv (US Census ACS via tidyr)",
+        "license": "MIT (tidyverse/tidyr package)"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Long tidy US rent/income: header row0 (GEOID,NAME,variable,estimate,moe), 104 data rows to Puerto Rico rent; GEOID is leading-zero string, last Puerto Rico income row uses NA markers but is still data.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 104,
+            "right": 5
+          }
+        ],
+        "primary": {
+          "clean_cols": 5,
+          "clean_rows": 104
+        }
+      }
+    },
+    {
+      "name": "tidy_weather_wide",
+      "file": "real/tidy_weather_wide.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 2786,
+      "sha256": "a08f0741301c14d8685ead75716a43440d435779a1b832925c6b9a1b04e6e6ac",
+      "grid": {
+        "rows": 23,
+        "cols": 35
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/tidyverse/tidyr/2c35387d4dea6fb5d725ec41b428341a20dcc7ac/vignettes/weather.csv",
+        "provider": "tidyverse/tidyr vignettes/weather.csv (Wickham 2014 'Tidy Data'; GHCN station MX000017004)",
+        "license": "MIT (tidyverse/tidyr package)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "wide",
+        "sparse",
+        "missing_markers",
+        "pivot_crosstab"
+      ],
+      "notes": "Wide untidy weather: header row0 id,year,month,element,d1..d31 (35 cols); 22 tmax/tmin rows mostly NA (sparse), key cols always filled so region is full grid.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 22,
+            "right": 35
+          }
+        ],
+        "primary": {
+          "clean_cols": 35,
+          "clean_rows": 22
+        }
+      }
+    },
+    {
+      "name": "tidyr_who_tb",
+      "file": "real/tidyr_who_tb.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 1405846,
+      "sha256": "b47a624b66ed0e0e4cd9a165312ddf97f32d9d819120668aedacc34b4e123de8",
+      "grid": {
+        "rows": 7241,
+        "cols": 60
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/tidyverse/tidyr/36502c811832319821d40aafed56d58d1549166a/data-raw/who.csv",
+        "provider": "tidyverse/tidyr data-raw (World Health Organization Global Tuberculosis Report subset)",
+        "license": "MIT (tidyr R package)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "wide",
+        "sparse",
+        "missing_markers"
+      ],
+      "notes": "WHO TB wide dataset: header row0 (country,iso2,iso3,year + 56 new_sp_* count cols = 60), 7240 data rows; most count cells are NA (sparse) but first 4 key cols always filled, single clean table spanning full grid.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 7240,
+            "right": 60
+          }
+        ],
+        "primary": {
+          "clean_cols": 60,
+          "clean_rows": 7240
+        }
+      }
+    },
+    {
+      "name": "tidytuesday_coffee_ratings",
+      "file": "real/tidytuesday_coffee_ratings.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 606314,
+      "sha256": "b01a80beec5d58849c8f268106167a52d1e14ba5e810ee9dffd3338c8656f296",
+      "grid": {
+        "rows": 1340,
+        "cols": 43
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/f2b0b31e316d0e35eef4834b9b058d05d46ffadf/data/2020/2020-07-07/coffee_ratings.csv",
+        "provider": "rfordatascience/tidytuesday 2020/2020-07-07 (James LeDoux, Coffee Quality Institute database scrape)",
+        "license": "CC0-1.0 (tidytuesday curation); underlying CQI data public"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "missing_markers",
+        "mixed_types",
+        "wide"
+      ],
+      "notes": "Clean header at row 0, single table filling the whole grid (1339 data rows x 43 cols); messiness is cell-level NA missing markers and mixed types, plus wide column count.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 1339,
+            "right": 43
+          }
+        ],
+        "primary": {
+          "clean_cols": 43,
+          "clean_rows": 1339
+        }
+      }
+    },
+    {
+      "name": "tidytuesday_us_avg_tuition",
+      "file": "real/tidytuesday_us_avg_tuition.xlsx",
+      "kind": "real",
+      "origin": "download",
+      "format": "xlsx",
+      "encoding": null,
+      "delimiter": null,
+      "sheet": "Table 5",
+      "bytes": 23015,
+      "sha256": "828674ac24d93133956c1e88c7831cd6166cba3be403fca5056dfe1f7c04ebae",
+      "grid": {
+        "rows": 51,
+        "cols": 13
+      },
+      "source": {
+        "url": "https://raw.githubusercontent.com/rfordatascience/tidytuesday/362fa86c328797428736f05c22af5eca3a27b731/data/2018/2018-04-02/us_avg_tuition.xlsx",
+        "provider": "rfordatascience/tidytuesday 2018/2018-04-02 (Southern Regional Education Board tuition report, 'Table 5')",
+        "license": "CC0-1.0 (tidytuesday curation); underlying SREB report public"
+      },
+      "difficulty": "easy",
+      "messiness_tags": [],
+      "notes": "Perfectly clean single table: header row 0 (State + 12 year columns), 50 state rows, no title/footer noise in the extracted 'Table 5' sheet.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": 0,
+            "top": 1,
+            "left": 0,
+            "bottom": 50,
+            "right": 13
+          }
+        ],
+        "primary": {
+          "clean_cols": 13,
+          "clean_rows": 50
+        }
+      }
+    },
+    {
+      "name": "uci_adult_census",
+      "file": "real/uci_adult_census.csv",
+      "kind": "real",
+      "origin": "download",
+      "format": "csv",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "sheet": "",
+      "bytes": 4039429,
+      "sha256": "5d45fe1755a22486c76ec58e4e00e37a3f884e74c4bb1c117f6e12980918e24a",
+      "grid": {
+        "rows": 32562,
+        "cols": 15
+      },
+      "source": {
+        "url": "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data",
+        "provider": "UCI Machine Learning Repository (Adult / Census Income, Becker & Kohavi)",
+        "license": "CC BY 4.0 (UCI ML Repository)"
+      },
+      "difficulty": "medium",
+      "messiness_tags": [
+        "no_header",
+        "missing_markers",
+        "mixed_types"
+      ],
+      "notes": "Classic UCI Adult with NO header row (row 0 is data) and a trailing blank row at 32561; header=-1 is the trap, plus '?' missing markers and mixed types.",
+      "ground_truth": {
+        "n_tables": 1,
+        "regions": [
+          {
+            "header": -1,
+            "top": 0,
+            "left": 0,
+            "bottom": 32560,
+            "right": 15
+          }
+        ],
+        "primary": {
+          "clean_cols": 15,
+          "clean_rows": 32561
+        }
+      }
+    }
+  ]
+}
