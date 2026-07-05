@@ -111,7 +111,7 @@ def detect_multivalue_columns(
     ...     "Fruits": ["apple", "apple, banana", "apple, banana, carrot"],
     ... })
     >>> detect_multivalue_columns(df)
-    [('Fruits', ',', 0.857)]
+    [('Fruits', ',', 0.667)]
     """
     if candidates is None:
         candidates = INTRA_CELL_DELIMITERS

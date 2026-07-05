@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- **Structural table detection** (`specimen/benchmark/core.py`): `TableModel` +
+  `build_table_model` resolve multi-row header blocks (reporting the *leaf* header row),
+  row-label/stub columns, and trailing summary/footnote trimming.
+- **Recursive XY-cut multi-table segmentation** (`segment_blocks`): splits side-by-side and
+  stacked tables using empty-**column** bands and section-title / repeated-header rows, with
+  over-split gates so single tables with interior gaps stay intact.
+- **Header-less table detection** (`_has_header`): label-over-data + year/month label +
+  body type-consistency signals.
+- `Pipeline.run(shape="long")` / `Pipeline.to_long()`: deterministic long-form melt driven
+  by the detected structure.
+- **Testbed benchmark** (`testbed/`): 55 human-verified files, `runner.py` scoring the public
+  `Pipeline` against `manifest.json`, `CATALOG.md`, and a committed `results/scorecard.md`.
+- `BENCHMARK.md`: consolidated, reproducible benchmark report.
 - `pyproject.toml` with PEP 621 metadata, replacing `setup.py`
 - Public API via `pynorma/__init__.py` (`parse`, `save_dataframe`, `flatten`, `atomize_by_column`, `atomize_by_row`, `clarify`, `append`, `merge`)
 - `__version__` attribute
@@ -16,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Comprehensive pytest test suite (`tests/test_parser.py`, `tests/test_detect.py`, `tests/test_preprocessor.py`)
 - GitHub Actions CI workflow (`.github/workflows/ci.yml`)
 - This `CHANGELOG.md`
+
+### Fixed
+- `detect_multivalue_columns` docstring example now reports the actual overlap ratio
+  (`0.667`, was `0.857`)
 
 ### Changed
 - **BREAKING**: `xlsx_parser.parse_xlsx()` now returns `Tuple[DataFrame, Dict]` (was `DataFrame`)

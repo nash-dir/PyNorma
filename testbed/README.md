@@ -52,16 +52,20 @@ See **[CATALOG.md](CATALOG.md)** for the full list with sources and licenses.
 
 | Metric | Value |
 |--------|-------|
-| Pass rate | **50 / 55 (91%)** |
-| Mean region IoU | **0.922** |
-| Mean header accuracy | **0.901** |
-| Table-count match | **53 / 55** |
+| Pass rate | **55 / 55 (100%)** |
+| Mean region IoU | **0.984** |
+| Mean header accuracy | **0.982** |
+| Table-count match | **55 / 55** |
 
-The 5 non-passing files are known-hard detection challenges, each a useful signal:
-`05_merged_cells_mess` & `10_multiple_tables_one_sheet` (drops a merged left column / doesn't
-split side-by-side tables), `census_h1_income_limits` (4 stacked sub-tables read as one),
-`tidy_billboard_wide` (trims trailing all-empty week columns), and `06_pivot_style_table`
-(region extends over trailing subtotals — the *cleaned* table is nonetheless correct).
+Pass rate is 100% across every difficulty tier (easy 9/9, medium 28/28, hard 11/11,
+adversarial 7/7). This was reached from a starting point of 50 / 55 (IoU 0.922, header
+0.901) with **general** structural rules — multi-row header resolution, XY-cut multi-table
+segmentation, and trailing-summary trimming — and no per-file or filename-specific handling.
+
+A few files still pass with an imperfect region rather than a perfect one — the softest are
+`nea_artists_in_workforce_table1a` (IoU 0.65), `04_ragged_columns` (0.71) and
+`15_subtotals_interspersed` (0.88) — all clear the IoU ≥ 0.60 bar. See
+**[../BENCHMARK.md](../BENCHMARK.md)** for the consolidated report across all harnesses.
 
 ## Quickstart
 
