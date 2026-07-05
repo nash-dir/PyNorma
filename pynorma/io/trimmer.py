@@ -23,14 +23,8 @@ logger = logging.getLogger("pynorma")
 def _try_ensemble_detect(df: pd.DataFrame) -> Optional[Tuple[int, int, int, int, int]]:
     """Try ensemble detection, returning (header, top, left, bottom, right) or None."""
     try:
-        import sys
-        from pathlib import Path
-        specimen_dir = Path(__file__).resolve().parent.parent.parent / "specimen" / "benchmark"
-        if specimen_dir.exists() and str(specimen_dir.parent) not in sys.path:
-            sys.path.insert(0, str(specimen_dir.parent))
-
-        from benchmark.core import TableRegion, quality_score
-        from benchmark.preprocess import detect as ensemble_detect
+        from pynorma.detect.core import TableRegion, quality_score
+        from pynorma.detect.preprocess import detect as ensemble_detect
 
         # Convert DataFrame to grid
         grid = []

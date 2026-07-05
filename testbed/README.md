@@ -124,7 +124,7 @@ The scorecard also breaks pass-rate down by difficulty (🟢 easy · 🟡 medium
 - A few sources are unavoidably branch-pinned or on institutional hosts (e.g. UCI); if one
   moves, `fetch.py` reports the failure and continues.
 
-> **Note:** ensemble detection lives in `specimen/benchmark/` (which PyNorma imports at
-> runtime). It's present in the working tree; on a fresh checkout that excludes `specimen/`,
-> `Pipeline` falls back to `pynorma.parse()`. Regenerate it via the `specimen/` collectors
-> if needed.
+> **Note:** the ensemble detection engine ships inside the `pynorma` package
+> (`pynorma/detect/`), so `runner.py` scores it whether or not `specimen/` is present. This
+> testbed only needs its own data pool in `testbed/data/` (rebuild with `fetch.py`);
+> `specimen/` holds the separate long-form F1 harness and its data.

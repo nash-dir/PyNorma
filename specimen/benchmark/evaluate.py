@@ -28,8 +28,8 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from benchmark.core import TableModel, read_specimen, build_table_model, to_long
-from benchmark.preprocess import detect
+from pynorma.detect.core import TableModel, read_specimen, build_table_model, to_long
+from pynorma.detect.preprocess import detect
 
 SPECIMEN_DIR = Path(__file__).resolve().parent.parent
 GT_PATH = Path(__file__).resolve().parent / "ground_truth.json"

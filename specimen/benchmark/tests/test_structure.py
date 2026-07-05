@@ -17,10 +17,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
-from benchmark.core import (
+from pynorma.detect.core import (
     TableModel, read_specimen, build_table_model, to_long,
 )
-from benchmark.preprocess import detect
+from pynorma.detect.preprocess import detect
 from benchmark.evaluate import load_ground_truth, evaluate, SPECIMEN_DIR
 
 

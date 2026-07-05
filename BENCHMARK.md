@@ -141,9 +141,6 @@ date-like columns, and recover/ignore broken header encodings.
 
 ### 5.2 Other known limitations
 
-- **Detection engine placement.** The engine is in `specimen/benchmark/`, imported via a
-  `sys.path` shim; a checkout/wheel without `specimen/` falls back to `pynorma.parse()`
-  silently. (Planned: promote into `pynorma/detect/`.)
 - **Auto-select size bias.** The ground-truth-free `quality_score` carries coverage/size
   terms that bias selection toward larger regions — a likely suspect if multi-table block
   selection misbehaves on new data.

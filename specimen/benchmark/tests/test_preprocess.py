@@ -20,18 +20,18 @@ import pytest
 # Add benchmark to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from benchmark.core import (
+from pynorma.detect.core import (
     TableRegion, is_empty, is_numeric, is_date_like, cell_type,
     row_fill_rate, quality_score, clean_region, compute_scores,
     read_specimen, grid_cols, Scores,
 )
-from benchmark.strategies.strategy_a_rules import StrategyA
-from benchmark.strategies.strategy_b_entropy import StrategyB
-from benchmark.strategies.strategy_c_gradient import StrategyC
-from benchmark.strategies.strategy_d_pattern import StrategyD
-from benchmark.strategies.strategy_e_window import StrategyE
-from benchmark.strategies.strategy_f_voting import StrategyF
-from benchmark.preprocess import detect, preprocess
+from pynorma.detect.strategies.strategy_a_rules import StrategyA
+from pynorma.detect.strategies.strategy_b_entropy import StrategyB
+from pynorma.detect.strategies.strategy_c_gradient import StrategyC
+from pynorma.detect.strategies.strategy_d_pattern import StrategyD
+from pynorma.detect.strategies.strategy_e_window import StrategyE
+from pynorma.detect.strategies.strategy_f_voting import StrategyF
+from pynorma.detect.preprocess import detect, preprocess
 
 SPECIMEN_DIR = Path(__file__).resolve().parent.parent.parent  # specimen/
 ALL_STRATEGIES = [StrategyA(), StrategyB(), StrategyC(),

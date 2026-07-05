@@ -16,17 +16,17 @@ from collections import defaultdict
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from benchmark.core import (
+from pynorma.detect.core import (
     TableRegion, Scores, compute_scores, quality_score,
     read_specimen, is_empty, is_numeric, row_fill_rate,
     grid_cols, has_summary_keyword,
 )
-from benchmark.strategies.strategy_a_rules import StrategyA
-from benchmark.strategies.strategy_b_entropy import StrategyB
-from benchmark.strategies.strategy_c_gradient import StrategyC
-from benchmark.strategies.strategy_d_pattern import StrategyD
-from benchmark.strategies.strategy_e_window import StrategyE
-from benchmark.strategies.strategy_f_voting import StrategyF
+from pynorma.detect.strategies.strategy_a_rules import StrategyA
+from pynorma.detect.strategies.strategy_b_entropy import StrategyB
+from pynorma.detect.strategies.strategy_c_gradient import StrategyC
+from pynorma.detect.strategies.strategy_d_pattern import StrategyD
+from pynorma.detect.strategies.strategy_e_window import StrategyE
+from pynorma.detect.strategies.strategy_f_voting import StrategyF
 
 SPECIMEN_DIR = Path(__file__).resolve().parent.parent
 RESULT_DIR = SPECIMEN_DIR / "benchmark" / "results"

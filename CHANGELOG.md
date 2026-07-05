@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
-- **Structural table detection** (`specimen/benchmark/core.py`): `TableModel` +
+- **Structural table detection** (`pynorma/detect/core.py`): `TableModel` +
   `build_table_model` resolve multi-row header blocks (reporting the *leaf* header row),
   row-label/stub columns, and trailing summary/footnote trimming.
 - **Recursive XY-cut multi-table segmentation** (`segment_blocks`): splits side-by-side and
@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   (`0.667`, was `0.857`)
 
 ### Changed
+- **Detection engine promoted into the package (Step 0).** Moved `core`, `preprocess`, and
+  `strategies/` from `specimen/benchmark/` into the installable `pynorma/detect/`, and removed
+  the `sys.path` shim in `pipeline.py` / `io/trimmer.py`. `pip install pynorma` now ships the
+  full detection engine — no `specimen/` checkout needed at runtime. `specimen/` retains only
+  the long-form F1 harness (`evaluate.py`), the engine tests, and ground truth. Testbed 55/55,
+  long-form micro-F1 0.9998, and 377 unit tests all unchanged.
 - **BREAKING**: `xlsx_parser.parse_xlsx()` now returns `Tuple[DataFrame, Dict]` (was `DataFrame`)
 - **BREAKING**: `xlsx_parser.parse_xlsx()` parameter `sheet` renamed to `sheet_name`
 - **BREAKING**: `xlsx_parser.parse_xlsx()` parameter `set_header` renamed to `is_header`

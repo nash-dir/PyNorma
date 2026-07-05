@@ -2,7 +2,7 @@
 preprocess.py — Public entry point for PyNorma table detection + cleaning.
 
 Usage:
-    from specimen.benchmark.preprocess import preprocess
+    from pynorma.detect.preprocess import preprocess
 
     results = preprocess("data.csv")                   # run-all (default)
     results = preprocess("data.csv", strategy="C")     # specific strategy

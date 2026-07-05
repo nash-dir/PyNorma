@@ -214,7 +214,7 @@ def _download(url: str) -> bytes | None:
 
 def fingerprint(path: Path) -> dict:
     """sha256 / bytes / rows / cols / encoding / delimiter via pynorma's own reader."""
-    from benchmark.core import read_specimen, grid_cols
+    from pynorma.detect.core import read_specimen, grid_cols
     raw = path.read_bytes()
     info = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
     try:

@@ -35,15 +35,10 @@ _DETECT_AVAILABLE = True  # Will be checked on first use
 
 
 def _import_detection():
-    """Import detection modules (specimen/benchmark is separate from pynorma package)."""
-    import sys
-    # Add specimen directory to path
-    specimen_benchmark = Path(__file__).resolve().parent.parent / "specimen" / "benchmark"
-    if specimen_benchmark.exists() and str(specimen_benchmark.parent) not in sys.path:
-        sys.path.insert(0, str(specimen_benchmark.parent))
+    """Import the in-package detection engine (``pynorma.detect``)."""
     try:
-        from benchmark import core as bcore
-        from benchmark.preprocess import detect as ensemble_detect
+        from pynorma.detect import core as bcore
+        from pynorma.detect.preprocess import detect as ensemble_detect
         return {
             "TableRegion": bcore.TableRegion,
             "quality_score": bcore.quality_score,

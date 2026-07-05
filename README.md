@@ -68,10 +68,9 @@ pip install -e .            # add ".[cli]" for the CLI, ".[dev]" for tests
 
 Runtime dependencies: `pandas`, `openpyxl`, `chardet` (Python ≥ 3.10).
 
-> **Note:** the detection engine currently lives in `specimen/benchmark/` and is imported
-> at runtime via a `sys.path` shim. An editable install from a full checkout works; a
-> packaged wheel that excludes `specimen/` will silently fall back to the simpler
-> `pynorma.parse()`. See [Limitations & known gaps](#limitations--known-gaps).
+> **Note:** the detection engine ships inside the `pynorma` package (`pynorma/detect/`), so
+> installing the wheel includes it — no `specimen/` checkout is needed at runtime.
+> `specimen/` and `testbed/` hold benchmark tooling and data only.
 
 ---
 
@@ -174,11 +173,6 @@ the full report, methodology, and reproduction steps.
 
 Reported honestly so you know what to check on your own data:
 
-- **Detection engine placement (architecture debt).** The active detection code lives in
-  `specimen/benchmark/` and is imported via a `sys.path` insert in `pynorma/pipeline.py`.
-  If that directory is absent (e.g. a wheel that packages only `pynorma/`), `Pipeline`
-  falls back to the simpler `pynorma.parse()` **without erroring**. Planned fix: promote
-  the engine into `pynorma/detect/` and drop the shim.
 - **1NF (multi-valued) recall is partial.** On the 5 testbed files with multi-valued
   columns, mean recall is **0.733**: chipotle / goodbooks / movielens are perfect (1.0),
   but Netflix `cast` is missed (0.667 — actor names rarely repeat across cells, so overlap
@@ -206,14 +200,16 @@ pynorma/
 │   ├── __init__.py             # Public exports
 │   ├── pipeline.py             # Pipeline: detect → clean → atomize/clarify/merge → long-form
 │   ├── io/                     # File I/O (CSV, XLSX), legacy trimmer
-│   ├── detect/                 # Legacy 3-phase detection (fallback / to be consolidated)
+│   ├── detect/                 # Detection engine (in-package, shipped in the wheel)
+│   │   ├── core.py             # TableModel, build_table_model, segment_blocks, to_long, …
+│   │   ├── preprocess.py       # detect(): ensemble orchestration + fallback
+│   │   ├── strategies/         # 6 competing detection strategies (A–F)
+│   │   └── *_finder.py         # legacy 3-phase helpers still used by the io/ parsers
 │   └── preprocessor/           # atomizer, clarifier, merger, flattener, appender modules
 ├── specimen/
-│   └── benchmark/              # Active detection engine (imported by Pipeline at runtime)
-│       ├── core.py             # TableModel, build_table_model, segment_blocks, to_long, …
-│       ├── strategies/         # 6 competing detection strategies (A–F)
+│   └── benchmark/              # Long-form F1 benchmark tooling (not the engine)
 │       ├── evaluate.py         # Long-form cell-level F1 harness (ground_truth.json)
-│       └── tests/              # Structure / regression tests
+│       └── tests/              # Structure / regression tests for the engine
 ├── testbed/                    # Primary benchmark
 │   ├── manifest.json           # 55 human-verified ground-truth labels
 │   ├── runner.py               # Scores the public Pipeline against manifest.json
