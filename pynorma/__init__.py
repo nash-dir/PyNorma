@@ -14,7 +14,7 @@ from pynorma.preprocessor.appender import append
 from pynorma.preprocessor.merger import merge
 from pynorma.pipeline import Pipeline
 
-__version__ = "1.0.0a1"
+__version__ = "1.0.0b1"
 __all__ = [
     "parse",
     "save_dataframe",

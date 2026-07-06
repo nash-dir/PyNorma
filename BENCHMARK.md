@@ -5,7 +5,7 @@ All numbers here come from a full local run of the committed code and match the 
 snapshots ([`testbed/results/scorecard.md`](testbed/results/scorecard.md),
 [`specimen/benchmark/eval_results.json`](specimen/benchmark/eval_results.json)).
 
-- **Version:** `pynorma 1.0.0a1`
+- **Version:** `pynorma 1.0.0b1`
 - **Run environment:** Python 3.12, pandas 3.0, openpyxl 3.1, chardet — Windows
 - **Strategy:** `auto` (ensemble of 6 strategies + ground-truth-free `quality_score`)
 

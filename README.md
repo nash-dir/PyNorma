@@ -1,5 +1,9 @@
 # PyNorma
 
+[![CI](https://github.com/nash-dir/PyNorma/actions/workflows/ci.yml/badge.svg)](https://github.com/nash-dir/PyNorma/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+
 **Turn messy, real-world spreadsheets into clean, tidy tables.**
 
 PyNorma is a Python library for preprocessing messy tabular data (CSV / XLSX). It
@@ -8,7 +12,7 @@ multi-level headers, footnotes and side-by-side layouts — cleans them, and can
 the result into tidy long form. It's built for data scientists and analysts who are
 tired of hand-cleaning unstructured exports.
 
-> **Status: `1.0.0a1` (alpha).** The public `Pipeline` API is stable enough to use,
+> **Status: `1.0.0b1` (beta).** The public `Pipeline` API is stable enough to use,
 > but internals are still moving (see [Limitations & known gaps](#limitations--known-gaps)).
 
 ---
@@ -148,7 +152,7 @@ pynorma clean book.xlsx --sheet 2 -o data.csv        # read a specific worksheet
 ## Benchmarks
 
 PyNorma ships with two evaluation harnesses. Numbers below are from a full local run on
-the committed code (`pynorma 1.0.0a1`); reproduce them with the commands in
+the committed code (`pynorma 1.0.0b1`); reproduce them with the commands in
 [BENCHMARK.md](BENCHMARK.md).
 
 ### Testbed — the primary metric (public `Pipeline` vs human-verified ground truth)

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0b1] — 2026-07-06
+
 ### Added
 - **Structural table detection** (`pynorma/detect/core.py`): `TableModel` +
   `build_table_model` resolve multi-row header blocks (reporting the *leaf* header row),
