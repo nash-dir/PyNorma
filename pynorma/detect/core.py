@@ -449,18 +449,79 @@ def segment_blocks(grid, r0=None, r1=None, c0=None, c1=None, *, _depth=0):
 # File reader
 # ═══════════════════════════════════════════
 
+# Non-standard delimiters, tried only when no standard delimiter is present and
+# the split is consistent across lines (so single-column text isn't mis-split).
+_NONSTD_DELIMS = ["::", r"\s{2,}"]
+
+
+def _consistent_split(lines: list[str], pattern: str) -> bool:
+    """True if `pattern` splits most lines into the same number (>1) of fields."""
+    counts = [len(re.split(pattern, ln.strip())) for ln in lines if ln.strip()]
+    if len(counts) < 3:
+        return False
+    modal, freq = Counter(counts).most_common(1)[0]
+    return modal >= 2 and freq / len(counts) >= 0.8
+
+
 def guess_delimiter(text: str) -> str:
-    lines = text.strip().split("\n")[:5]
+    all_lines = text.strip().split("\n")
     scores = {",": 0, ";": 0, "\t": 0, "|": 0}
-    for line in lines:
+    for line in all_lines[:5]:
         for sep in scores:
             scores[sep] += line.count(sep)
     best = max(scores, key=scores.get)
-    return best if scores[best] > 0 else ","
+    if scores[best] > 0:
+        return best
+    # No standard delimiter — try non-standard, but only if it splits most
+    # lines into a consistent (>1) field count (else it is single-column text).
+    sample = [ln for ln in all_lines if ln.strip()][:20]
+    for cand in _NONSTD_DELIMS:
+        if _consistent_split(sample, cand):
+            return cand
+    return ","
 
 
-def read_specimen(path: Path) -> tuple[list[list[str]], dict]:
-    """Read CSV/XLSX into 2D string grid + meta."""
+def _select_sheet(wb, sheet=None):
+    """Pick which worksheet to read.
+
+    Honors an explicit `sheet` (name or 0-based index). Otherwise keeps the
+    first sheet, overriding only when it is a near-empty cover/readme sheet and
+    another sheet clearly holds more tabular content.
+    """
+    names = wb.sheetnames
+    if not names:
+        return None
+    if sheet is not None:
+        if isinstance(sheet, bool):
+            pass
+        elif isinstance(sheet, int) and 0 <= sheet < len(names):
+            return names[sheet]
+        elif sheet in names:
+            return sheet
+
+    def table_score(name: str, cap: int = 8) -> int:
+        """Count rows with >= 2 non-empty cells — a proxy for tabular content
+        (a cover/readme sheet is mostly single-cell note rows)."""
+        score = 0
+        for row in wb[name].iter_rows(values_only=True):
+            if sum(1 for c in row if c is not None and str(c).strip() != "") >= 2:
+                score += 1
+                if score >= cap:
+                    break
+        return score
+
+    first = names[0]
+    if len(names) == 1 or table_score(first) >= 2:
+        return first  # first sheet is already tabular (or the only sheet) → keep it
+    return max(names, key=table_score)
+
+
+def read_specimen(path: Path, sheet=None) -> tuple[list[list[str]], dict]:
+    """Read CSV/XLSX into 2D string grid + meta.
+
+    For multi-sheet XLSX, `sheet` (name or 0-based index) forces a worksheet;
+    otherwise the first sheet is used unless it is a near-empty cover sheet.
+    """
     ext = path.suffix.lower()
     meta = {"filename": path.name, "format": ext, "size": path.stat().st_size}
 
@@ -478,15 +539,21 @@ def read_specimen(path: Path) -> tuple[list[list[str]], dict]:
             meta["encoding"] = "latin-1"
         delim = guess_delimiter(text)
         meta["delimiter"] = delim
-        rows = list(csv.reader(io.StringIO(text), delimiter=delim))
+        if delim in (",", ";", "\t", "|"):
+            rows = list(csv.reader(io.StringIO(text), delimiter=delim))
+        else:
+            # non-standard (regex) delimiter — split each line individually
+            rows = [re.split(delim, ln.strip()) if ln.strip() else []
+                    for ln in text.splitlines()]
     elif ext == ".xlsx":
         import openpyxl
         wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
-        ws = wb[wb.sheetnames[0]]
+        name = _select_sheet(wb, sheet)
+        ws = wb[name]
         rows = [[str(c) if c is not None else "" for c in row]
                 for row in ws.iter_rows(values_only=True)]
         wb.close()
-        meta["sheet"] = wb.sheetnames[0] if wb.sheetnames else ""
+        meta["sheet"] = name if name else ""
     else:
         rows = []
 

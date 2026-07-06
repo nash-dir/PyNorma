@@ -119,7 +119,7 @@ class Pipeline:
             grid = [list(self._source.columns)] + self._source.values.tolist()
             grid = [[str(c) if c is not None else "" for c in row] for row in grid]
         else:
-            grid, _ = modules["read_specimen"](Path(self._source))
+            grid, _ = modules["read_specimen"](Path(self._source), sheet=self._sheet_name)
 
         self._grid = grid
         raw_regions = modules["detect"](grid, strategy=self._strategy)

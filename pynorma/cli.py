@@ -35,6 +35,13 @@ def _write(df, output: Path) -> None:
         df.to_csv(output, index=False)
 
 
+def _parse_sheet(sheet):
+    """Parse a --sheet value as a 0-based index or a worksheet name."""
+    if sheet is None:
+        return None
+    return int(sheet) if sheet.lstrip("-").isdigit() else sheet
+
+
 @app.command()
 def clean(
     input: Path = typer.Argument(
@@ -48,6 +55,10 @@ def clean(
     strategy: Optional[str] = typer.Option(
         None, "--strategy", "-s",
         help="Detection strategy A-F. Omit to auto-select (recommended).",
+    ),
+    sheet: Optional[str] = typer.Option(
+        None, "--sheet",
+        help="XLSX worksheet name or 0-based index (default: auto).",
     ),
     shape: str = typer.Option(
         "wide", "--shape",
@@ -63,7 +74,8 @@ def clean(
         raise typer.BadParameter("--shape must be 'wide' or 'long'")
 
     p = Pipeline(
-        str(input), strategy=strategy.upper() if strategy else None
+        str(input), strategy=strategy.upper() if strategy else None,
+        sheet_name=_parse_sheet(sheet),
     ).detect().clean()
     tables = p.all_tables()
     if not tables:
@@ -96,9 +108,13 @@ def detect(
         ..., exists=True, dir_okay=False, readable=True,
         help="CSV/XLSX file to inspect.",
     ),
+    sheet: Optional[str] = typer.Option(
+        None, "--sheet",
+        help="XLSX worksheet name or 0-based index (default: auto).",
+    ),
 ):
     """Report the detected table region(s) without writing any output."""
-    p = Pipeline(str(input)).detect().clean()
+    p = Pipeline(str(input), sheet_name=_parse_sheet(sheet)).detect().clean()
     tables = p.all_tables()
     typer.echo(f"{len(tables)} table(s) detected in {input.name}:")
     for i, t in enumerate(tables):

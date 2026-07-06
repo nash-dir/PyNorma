@@ -149,8 +149,10 @@ pass regardless).
 - **Summary-row trimming is keyword-based.** Trailing-summary trimming matches summary
   keywords as substrings, so legitimate rows containing words like "total" could in theory
   be over-trimmed. Safe on the current 55 files, but a known-fragile heuristic.
-- **Single-sheet XLSX.** Only the first worksheet is read; no data-sheet auto-selection.
-- **Non-standard delimiters.** Whitespace / `::` separated files can collapse to one column.
+- **One worksheet per workbook.** Auto-selects the tabular sheet (or honors `sheet=`), but
+  does not yet combine data spread across multiple sheets.
+- **Delimiter coverage.** Comma/tab/semicolon/pipe plus `::` and space-aligned fallbacks;
+  other exotic / single-space separators may still be missed.
 - **Performance.** Large files can take tens of seconds — `uci_adult_census` (~32k rows)
   takes ~20 s in the tracked run, as `segment_blocks` re-scans the grid multiple times.
 

@@ -140,6 +140,7 @@ pynorma clean messy.csv                              # preview the cleaned table
 pynorma clean messy.csv -o tidy.csv                  # write the cleaned table
 pynorma clean report.xlsx --shape long -o tidy.csv   # clean + melt to long form
 pynorma clean sheet.xlsx -t 1 -o table1.csv          # pick a table on a multi-table sheet
+pynorma clean book.xlsx --sheet 2 -o data.csv        # read a specific worksheet (name or index)
 ```
 
 ---
@@ -191,11 +192,11 @@ Reported honestly so you know what to check on your own data:
   files (high-cardinality lists and a mojibake header included), but detection is signal-based
   and can still over-flag or miss on unfamiliar data (e.g. it over-flags URL columns). It is
   **not** part of the testbed pass criteria.
-- **Single-sheet XLSX only.** Only the first worksheet is read; a workbook whose data sits
-  behind a README/chart sheet will be missed. Sheet selection isn't yet wired into the
-  detect path.
-- **Standard delimiters only.** Whitespace- or `::`-separated files can collapse into a
-  single column at read time.
+- **One worksheet per workbook.** For multi-sheet XLSX, PyNorma auto-selects the tabular
+  sheet (skipping a cover/readme sheet) or honors an explicit `sheet=` / `--sheet`; it does
+  not yet combine data spread across several sheets.
+- **Delimiter coverage.** Comma/tab/semicolon/pipe are detected, plus `::` and space-aligned
+  columns as fallbacks; other exotic or single-space separators may still not be recognized.
 - **Auto-select can favor large regions.** The ground-truth-free `quality_score` includes
   coverage/size terms that bias selection toward bigger regions; if multi-table block
   selection ever looks wrong, check there first.

@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   `pynorma clean <file> [-o out] [--shape long] [--strategy A-F] [-t N]` and
   `pynorma detect <file>` (requires the `[cli]` extra).
 - `py.typed` marker — PyNorma now ships PEP 561 inline type information.
+- **Multi-sheet XLSX selection**: `read_specimen` / `Pipeline(sheet_name=)` / CLI `--sheet`
+  choose a worksheet by name or 0-based index, and auto-select the tabular sheet (skipping a
+  cover/readme sheet) when none is given.
+- **Non-standard delimiters**: `::` and space-aligned columns are detected as fallbacks when
+  no standard delimiter (`, ; \t |`) is present and the split is consistent across lines.
 - `pyproject.toml` with PEP 621 metadata, replacing `setup.py`
 - Public API via `pynorma/__init__.py` (`parse`, `save_dataframe`, `flatten`, `atomize_by_column`, `atomize_by_row`, `clarify`, `append`, `merge`)
 - `__version__` attribute
