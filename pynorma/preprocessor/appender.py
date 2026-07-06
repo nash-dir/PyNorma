@@ -1,7 +1,7 @@
 """Append (vertically concatenate) two DataFrames with smart header handling."""
 
 import logging
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, Literal, Optional, Union
 
 import pandas as pd
 

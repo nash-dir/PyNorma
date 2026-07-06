@@ -23,7 +23,6 @@ logger = logging.getLogger("pynorma")
 def _try_ensemble_detect(df: pd.DataFrame) -> Optional[Tuple[int, int, int, int, int]]:
     """Try ensemble detection, returning (header, top, left, bottom, right) or None."""
     try:
-        from pynorma.detect.core import TableRegion, quality_score
         from pynorma.detect.preprocess import detect as ensemble_detect
 
         # Convert DataFrame to grid

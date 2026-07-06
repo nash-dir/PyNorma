@@ -3,8 +3,7 @@ Strategy A: Rule-Based Heuristic
 가설: "고정 규칙이면 충분하다"
 """
 from __future__ import annotations
-from ..core import (Strategy, TableRegion, is_empty, is_numeric,
-                    row_fill_rate, grid_cols, has_summary_keyword)
+from ..core import (Strategy, TableRegion, row_fill_rate, grid_cols, has_summary_keyword)
 
 
 class StrategyA(Strategy):

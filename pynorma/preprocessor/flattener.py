@@ -3,7 +3,6 @@
 import logging
 from typing import List, Optional
 
-import numpy as np
 import pandas as pd
 
 from pynorma.utils import find_largest_soft_rectangle

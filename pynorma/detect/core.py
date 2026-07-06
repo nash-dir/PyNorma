@@ -514,7 +514,6 @@ def clean_region(grid: list[list[str]], region: TableRegion) -> list[list[str]]:
     else:
         headers = [f"Col_{i}" for i in range(right - left)]
 
-    ncols = len(headers)
     result = [headers]
     seen = set()
 

@@ -350,7 +350,7 @@ class Pipeline:
             self._log.append(f"Append: merged table {other}")
         elif isinstance(other, pd.DataFrame):
             self._df = append(self._df, other)
-            self._log.append(f"Append: merged external DataFrame")
+            self._log.append("Append: merged external DataFrame")
 
         return self
 

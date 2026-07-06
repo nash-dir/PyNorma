@@ -17,7 +17,7 @@ from typing import Optional
 
 from .core import (
     TableRegion, Strategy, quality_score, clean_region,
-    read_specimen, grid_cols, split_tables_by_gap, segment_blocks,
+    read_specimen, segment_blocks,
 )
 from .strategies.strategy_a_rules import StrategyA
 from .strategies.strategy_b_entropy import StrategyB
@@ -44,7 +44,6 @@ def _select_best(
     """Run-all: pick the strategy whose regions score highest."""
     best_score = -1.0
     best_regions: list[TableRegion] = []
-    best_name = ""
 
     for name, regions in candidates.items():
         if not regions:
@@ -55,7 +54,6 @@ def _select_best(
         if avg > best_score:
             best_score = avg
             best_regions = regions
-            best_name = name
 
     return best_regions
 

@@ -4,7 +4,7 @@ Strategy D: Pattern-First Normalizer
 """
 from __future__ import annotations
 import re
-from ..core import (Strategy, TableRegion, is_empty, is_numeric,
+from ..core import (Strategy, TableRegion, is_numeric,
                     row_fill_rate, grid_cols, clean_cell)
 
 

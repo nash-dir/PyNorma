@@ -3,7 +3,6 @@
 import csv
 import logging
 import os
-from typing import Optional
 
 import pandas as pd
 

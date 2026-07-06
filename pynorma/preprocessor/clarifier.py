@@ -1,7 +1,7 @@
 """Clarifier — standardize column values using a dictionary-based mapping."""
 
 import logging
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import pandas as pd
 
