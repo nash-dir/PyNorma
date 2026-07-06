@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **Testbed benchmark** (`testbed/`): 55 human-verified files, `runner.py` scoring the public
   `Pipeline` against `manifest.json`, `CATALOG.md`, and a committed `results/scorecard.md`.
 - `BENCHMARK.md`: consolidated, reproducible benchmark report.
+- **Command-line interface** (`pynorma` console script + `python -m pynorma`):
+  `pynorma clean <file> [-o out] [--shape long] [--strategy A-F] [-t N]` and
+  `pynorma detect <file>` (requires the `[cli]` extra).
+- `py.typed` marker — PyNorma now ships PEP 561 inline type information.
 - `pyproject.toml` with PEP 621 metadata, replacing `setup.py`
 - Public API via `pynorma/__init__.py` (`parse`, `save_dataframe`, `flatten`, `atomize_by_column`, `atomize_by_row`, `clarify`, `append`, `merge`)
 - `__version__` attribute
@@ -41,6 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   full detection engine — no `specimen/` checkout needed at runtime. `specimen/` retains only
   the long-form F1 harness (`evaluate.py`), the engine tests, and ground truth. Testbed 55/55,
   long-form micro-F1 0.9998, and 377 unit tests all unchanged.
+- CI now also runs the engine tests (`specimen/benchmark/tests`, which skip gracefully when
+  the gitignored corpus is absent) and smoke-tests the CLI; installs the `[cli]` extra.
+- `requirements.txt` trimmed to the core runtime deps; CLI/dev deps live in the `[cli]` /
+  `[dev]` extras, matching `pyproject.toml`.
 - **BREAKING**: `xlsx_parser.parse_xlsx()` now returns `Tuple[DataFrame, Dict]` (was `DataFrame`)
 - **BREAKING**: `xlsx_parser.parse_xlsx()` parameter `sheet` renamed to `sheet_name`
 - **BREAKING**: `xlsx_parser.parse_xlsx()` parameter `set_header` renamed to `is_header`

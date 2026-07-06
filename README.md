@@ -128,6 +128,19 @@ The full public API is `Pipeline`, `parse`, `save_dataframe`, `flatten`,
 `atomize_by_column`, `atomize_by_row`, `detect_multivalue_columns`, `clarify`,
 `append`, `merge` (see [`pynorma/__init__.py`](pynorma/__init__.py)).
 
+### Command line
+
+Install the `[cli]` extra (`pip install ".[cli]"`) to get the `pynorma` command (also
+runnable as `python -m pynorma`):
+
+```bash
+pynorma detect messy.xlsx                            # list detected table(s) + shapes
+pynorma clean messy.csv                              # preview the cleaned table
+pynorma clean messy.csv -o tidy.csv                  # write the cleaned table
+pynorma clean report.xlsx --shape long -o tidy.csv   # clean + melt to long form
+pynorma clean sheet.xlsx -t 1 -o table1.csv          # pick a table on a multi-table sheet
+```
+
 ---
 
 ## Benchmarks

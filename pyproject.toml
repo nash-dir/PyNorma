@@ -42,12 +42,18 @@ dev = [
     "ruff>=0.4",
 ]
 
+[project.scripts]
+pynorma = "pynorma.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/nash-dir/PyNorma"
 Repository = "https://github.com/nash-dir/PyNorma"
 
 [tool.setuptools.packages.find]
 include = ["pynorma*"]
+
+[tool.setuptools.package-data]
+pynorma = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
