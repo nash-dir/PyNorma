@@ -6,6 +6,7 @@ Includes two detection methods:
 """
 
 import logging
+import re
 from collections import Counter
 from typing import List, Optional, Tuple, Union
 
@@ -72,6 +73,48 @@ def detect_feature_delimiter(
     return best_delim if max_score > min_score else None
 
 
+# Date-like cell patterns — used to exclude date columns from 1NF detection
+# (e.g. "August 14, 2020" splits on ", " but is a single date, not a list).
+_MONTH = (r"jan(uary)?|feb(ruary)?|mar(ch)?|apr(il)?|may|jun(e)?|jul(y)?|"
+          r"aug(ust)?|sep(t(ember)?)?|oct(ober)?|nov(ember)?|dec(ember)?")
+_DATE_PATTERNS = [
+    re.compile(r"^\d{4}-\d{1,2}-\d{1,2}$"),                          # 2020-08-14
+    re.compile(r"^\d{1,2}[/.]\d{1,2}[/.]\d{2,4}$"),                  # 14/08/2020
+    re.compile(rf"^({_MONTH})\.?\s+\d{{1,2}},?\s+\d{{4}}$", re.I),   # August 14, 2020
+    re.compile(rf"^\d{{1,2}}\s+({_MONTH})\.?,?\s+\d{{4}}$", re.I),   # 14 August 2020
+]
+
+
+def _is_date_like(series: pd.Series, threshold: float = 0.8) -> bool:
+    """True if most cells look like a single date (not a multi-valued list)."""
+    sample = series.head(200)
+    if sample.empty:
+        return False
+    hits = sum(1 for v in sample if any(p.match(v.strip()) for p in _DATE_PATTERNS))
+    return hits / len(sample) >= threshold
+
+
+def _looks_like_list(split_cells: pd.Series, multi_mask: pd.Series,
+                     multi_ratio: float) -> float:
+    """Confidence that a column is a consistent list of many short atoms.
+
+    Complements the overlap signal for high-cardinality lists (e.g. a cast of
+    actors) whose atoms rarely repeat across rows. Returns 0.0 when the column
+    reads more like prose (few, long atoms) than a list.
+    """
+    if multi_ratio < 0.5:
+        return 0.0
+    multi_cells = split_cells[multi_mask]
+    if multi_cells.empty:
+        return 0.0
+    if multi_cells.apply(len).mean() < 3:      # 2-atom cells are usually pairs/dates
+        return 0.0
+    words = [len(atom.split()) for atoms in multi_cells for atom in atoms]
+    if words and (sum(words) / len(words)) > 4:  # long atoms → prose, not a list
+        return 0.0
+    return float(multi_ratio)
+
+
 def detect_multivalue_columns(
     df: pd.DataFrame,
     candidates: Optional[List[str]] = None,
@@ -101,8 +144,9 @@ def detect_multivalue_columns(
 
     Returns
     -------
-    list of (column_name, delimiter, overlap_ratio)
-        Sorted by overlap_ratio descending. Only columns above threshold.
+    list of (column_name, delimiter, confidence)
+        Sorted by confidence descending. Confidence is the stronger of the
+        atom-overlap and consistent-list signals. Only columns above threshold.
 
     Examples
     --------
@@ -118,13 +162,18 @@ def detect_multivalue_columns(
 
     results = []
 
-    for col in df.columns:
-        series = df[col].dropna().astype(str)
+    for i in range(df.shape[1]):
+        col = df.columns[i]
+        # Positional access → robust to duplicate column labels (df[col] would
+        # return a DataFrame, breaking the per-cell split below).
+        series = df.iloc[:, i].dropna().astype(str)
         if series.empty or len(series) < 3:
             continue
+        if _is_date_like(series):
+            continue  # e.g. "August 14, 2020" — a date, not a multi-valued list
 
         best_delim = None
-        best_overlap = 0.0
+        best_score = 0.0
 
         for delim in candidates:
             # Split all cells by this delimiter
@@ -146,8 +195,7 @@ def detect_multivalue_columns(
             if not all_atoms:
                 continue
 
-            # Overlap: atoms from multi-valued cells that appear in other cells
-            # (as single values or in other multi-valued cells)
+            # Atoms from multi-valued cells vs. those appearing in single cells
             multi_atoms = set()
             for atoms in split_cells[multi_mask]:
                 multi_atoms.update(atoms)
@@ -159,23 +207,27 @@ def detect_multivalue_columns(
             if not multi_atoms:
                 continue
 
-            # Overlap = proportion of multi-cell atoms that also appear elsewhere
-            # Also count atoms that appear in > 1 multi-valued cell
+            # Signal 1 (overlap): multi-cell atoms that reappear elsewhere —
+            # strong for lists whose values recur (genres, countries, tags).
             overlap_count = 0
             for atom in multi_atoms:
                 if atom in single_atoms or all_atoms[atom] > 1:
                     overlap_count += 1
-
             overlap_ratio = overlap_count / len(multi_atoms)
 
-            if overlap_ratio > best_overlap:
-                best_overlap = overlap_ratio
+            # Signal 2 (consistent list): many short atoms per cell — catches
+            # high-cardinality lists whose atoms rarely repeat (e.g. a cast).
+            list_ratio = _looks_like_list(split_cells, multi_mask, multi_ratio)
+
+            score = max(overlap_ratio, list_ratio)
+            if score > best_score:
+                best_score = score
                 best_delim = delim
 
-        if best_delim and best_overlap >= min_overlap:
-            results.append((col, best_delim, round(best_overlap, 3)))
+        if best_delim and best_score >= min_overlap:
+            results.append((col, best_delim, round(best_score, 3)))
 
-    # Sort by overlap descending
+    # Sort by confidence descending
     results.sort(key=lambda x: x[2], reverse=True)
     return results
 

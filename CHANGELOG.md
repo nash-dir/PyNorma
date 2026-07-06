@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - This `CHANGELOG.md`
 
 ### Fixed
+- **1NF detection robustness** (`detect_multivalue_columns`): iterate columns positionally
+  (fixes a crash on duplicate column labels — e.g. the IMDb file's two `Director` columns);
+  exclude date-like columns (no longer mis-flags `date_added`); add a consistent-list signal
+  for high-cardinality lists whose atoms rarely repeat (e.g. a `cast`). Testbed 1NF recall
+  **0.733 → 1.0** across the 5 multi-valued files (netflix 0.667→1.0, imdb 0.0→1.0).
 - `detect_multivalue_columns` docstring example now reports the actual overlap ratio
   (`0.667`, was `0.857`)
 

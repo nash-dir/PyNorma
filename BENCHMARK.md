@@ -121,7 +121,7 @@ conditional test; warnings are pandas-3 / pytest-9 deprecation notices, not fail
 
 These are real, measured gaps — not hypotheticals.
 
-### 5.1 1NF (multi-valued column) recall — mean 0.733
+### 5.1 1NF (multi-valued column) recall — mean 1.0 (was 0.733)
 
 `detect_multivalue_columns` is scored on the 5 testbed files that actually contain
 multi-valued columns:
@@ -129,15 +129,17 @@ multi-valued columns:
 | File | 1NF recall | Note |
 |---|---|---|
 | `dat8_chipotle_orders` | 1.0 | ✓ |
-| `goodbooks_books` | 1.0 | ✓ |
+| `goodbooks_books` | 1.0 | ✓ (also over-flags URL columns — harmless for recall) |
 | `movielens_movies` | 1.0 | ✓ |
-| `netflix_titles` | **0.667** | misses `cast`: actor names rarely repeat across cells, so atom-overlap stays below threshold; also mis-flags `date_added` |
-| `realworld_imdb_messy` | **0.0** | mojibake header (`Genr�`) — a header-detection miss cascades into 1NF failure |
+| `netflix_titles` | 1.0 | `cast` now caught by the consistent-list signal; `date_added` excluded as a date (was 0.667) |
+| `realworld_imdb_messy` | 1.0 | duplicate-column crash fixed; mojibake header `Genr�` detected (was 0.0) |
 
-1NF recall is **not** part of the testbed pass criteria (all 55 pass regardless), but it is
-a stated project goal and the clearest place the current heuristic is weak. Likely fix:
-complement atom-overlap with an "atoms-per-cell + delimiter-consistency" signal, exclude
-date-like columns, and recover/ignore broken header encodings.
+Detection combines two signals — atom **overlap** (for lists whose values recur, e.g.
+genres/countries) and a **consistent-list** heuristic (many short atoms per cell, for
+high-cardinality lists like a cast) — and excludes date-like columns. It remains heuristic:
+recall is 1.0 on these files, but it can still over-flag unfamiliar shapes (e.g. URL columns)
+or miss lists on unseen data. 1NF recall is **not** part of the testbed pass criteria (all 55
+pass regardless).
 
 ### 5.2 Other known limitations
 

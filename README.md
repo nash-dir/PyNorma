@@ -48,7 +48,8 @@ Raw file ──▶ segment into blocks ──▶ per-block table detection ─�
   (`Pipeline(path).run(shape="long")`), the primary path toward the project's goal of
   tidy long-form output.
 - **1NF violation detection** — flags columns holding multi-valued cells (e.g.
-  `"drama, crime"`) via delimiter/atom analysis (heuristic; see limitations).
+  `"drama, crime"`) using complementary atom-overlap and consistent-list signals plus
+  date-column exclusion (1.0 recall on the testbed's 5 multi-valued files).
 - **Preprocessing toolkit** — importable helpers `atomize_by_column` / `atomize_by_row`
   (explode multi-valued cells), `flatten` (wide multi-header → long), `clarify`
   (dictionary value standardization), `merge` (dedupe by summing numerics), and `append`
@@ -186,10 +187,9 @@ the full report, methodology, and reproduction steps.
 
 Reported honestly so you know what to check on your own data:
 
-- **1NF (multi-valued) recall is partial.** On the 5 testbed files with multi-valued
-  columns, mean recall is **0.733**: chipotle / goodbooks / movielens are perfect (1.0),
-  but Netflix `cast` is missed (0.667 — actor names rarely repeat across cells, so overlap
-  signals stay below threshold) and a mojibake-header IMDb file scores 0.0. 1NF recall is
+- **1NF detection is heuristic.** Multi-valued-column recall is 1.0 on the testbed's 5 such
+  files (high-cardinality lists and a mojibake header included), but detection is signal-based
+  and can still over-flag or miss on unfamiliar data (e.g. it over-flags URL columns). It is
   **not** part of the testbed pass criteria.
 - **Single-sheet XLSX only.** Only the first worksheet is read; a workbook whose data sits
   behind a README/chart sheet will be missed. Sheet selection isn't yet wired into the
